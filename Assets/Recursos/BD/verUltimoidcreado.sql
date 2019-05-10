@@ -1,0 +1,1 @@
+ SELECT * from SQLITE_SEQUENCE where name = 'aprendizaje'; 
