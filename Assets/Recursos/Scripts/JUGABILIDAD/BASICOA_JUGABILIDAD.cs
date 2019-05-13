@@ -13,6 +13,12 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
 
     //Tiempos
     public string tiempo_reaccion, tiempo_cuadrado, tiempo_boton;
+    public Text timerText;
+    private float startTime;
+    public GameObject HandRight;
+    public GameObject HandLeft;
+    private bool finalisacion = false;
+
     public int acierto_bd;
     public Text txtSalir;
     public GameObject btnSalir;
@@ -48,14 +54,13 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt (1);
 
     public  string tiempoTranscurrido;
-    public  float startTime;
     public  float stopTime;
     public  float timerTime;
     public  bool isRunning = false;
 
     // Use this for initialization
     void Start () {
-        TimerReset ();
+        iniciarReloj();
         texturaIzquierda = new Texture2D (256, 256);
         texturaDerecha = new Texture2D (256, 256);
         txtcontinuar.text = "";
@@ -74,15 +79,15 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        		timerTime = stopTime + (Time.time - startTime);
-		int minutesInt = (int) timerTime / 60;
-		int secondsInt = (int) timerTime % 60;
-		int seconds100Int = (int) (Mathf.Floor ((timerTime - (secondsInt + minutesInt * 60)) * 100));
-
-		if (isRunning) {
-			tiempoTranscurrido = string.Format ("{00}:{01}:{02}", minutesInt.ToString(), secondsInt.ToString(), seconds100Int.ToString());
-		}
-
+        procesoReloj();
+        if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
+        {
+            finalisarReloj();
+            tiempo_reaccion = timerText.text;
+            Debug.Log(tiempo_reaccion);
+            reinicioReloj();
+        }
+     
     }
     public void TimerStart () {
         if (!isRunning) {
@@ -271,8 +276,9 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                 if (id_personaje_1 == id_boton_derecha) {
                     Debug.Log (" ** ACIERTO **  ");
                     //Tiempo a boton
-                    Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
-                    tiempo_boton = CRONOMETRO.tiempoTranscurrido;
+                    //Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
+                    //tiempo_boton = CRONOMETRO.tiempoTranscurrido;
+                    //tiempo_boton = minutes + ":" + seconds;
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play ();
                     ACIERTO = 1;
@@ -492,6 +498,32 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         dbcmd = null;
         dbconn.Close ();
         dbconn = null;
+    }
+
+    public void iniciarReloj()
+    {
+        startTime = Time.time;
+    }
+
+    public string procesoReloj()
+    {
+        float t = Time.time - startTime;
+        string minutes = ((int)t / 60).ToString();
+        string seconds = (t % 60).ToString("f2");
+
+        timerText.text = minutes + ":" + seconds;
+        return timerText.text;
+    }
+
+    public void reinicioReloj()
+    {
+        startTime = 0.0f;
+    }
+
+    public void finalisarReloj()
+    {
+        finalisacion = true;
+        timerText.color = Color.yellow;
     }
 
 }
