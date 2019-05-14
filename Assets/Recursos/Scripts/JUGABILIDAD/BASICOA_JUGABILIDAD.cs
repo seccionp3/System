@@ -12,12 +12,13 @@ using UnityEngine.UI;
 public class BASICOA_JUGABILIDAD : MonoBehaviour {
 
     //Tiempos
-    public string tiempo_reaccion, tiempo_cuadrado, tiempo_boton;
+    public string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
     public Text timerText;
     private float startTime;
     public GameObject HandRight;
     public GameObject HandLeft;
     private bool finalisacion = false;
+    private int contador = 0;
 
     public int acierto_bd;
     public Text txtSalir;
@@ -53,10 +54,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt (0);
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt (1);
 
-    public  string tiempoTranscurrido;
-    public  float stopTime;
-    public  float timerTime;
-    public  bool isRunning = false;
 
     // Use this for initialization
     void Start () {
@@ -80,37 +77,21 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         procesoReloj();
-        if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
-        {
-            finalisarReloj();
-            tiempo_reaccion = timerText.text;
-            Debug.Log(tiempo_reaccion);
-            reinicioReloj();
+        
+        if (contador == 0) {
+            if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
+            {
+                finalisarReloj();
+                tiempo_reaccion = timerText.text;
+                Debug.Log(tiempo_reaccion);
+                reinicioReloj();
+                iniciarReloj();
+                contador ++;
+            }
         }
      
     }
-    public void TimerStart () {
-        if (!isRunning) {
-            Debug.Log ("START");
-            isRunning = true;
-            startTime = Time.time;
-        }
-    }
 
-    public void TimerStop () {
-        if (isRunning) {
-            Debug.Log ("STOP");
-            isRunning = false;
-            stopTime = timerTime;
-        }
-    }
-
-    public void TimerReset () {
-        Debug.Log ("RESET");
-        stopTime = 0;
-        isRunning = false;
-        //timerMinutes.text = timerSeconds.text = timerSeconds100.text = "00";
-    }
 
     public void siguienteElemento () {
 
@@ -259,7 +240,15 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         if (tocar_boton_derecho) {
             valorDerecha++;
         }
+        if (valorDerecha == 1) {
+            finalisarReloj();
+            tiempo_cuadrado = timerText.text;
+            Debug.Log(tiempo_cuadrado);
+            reinicioReloj();
+        }
         if (valorDerecha >= 100) {
+            tiempo_boton = timerText.text;
+            Debug.Log(tiempo_boton);
             //btn_derecha.GetComponent<Renderer>().material.color = Color.red;
             tocar_boton_derecho = false;
             //Indicar Imagen
@@ -274,24 +263,20 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             if (estado_juego == 1 && intentos > 0) {
                 intentos--;
                 if (id_personaje_1 == id_boton_derecha) {
+                    acierto = "acierto";
                     Debug.Log (" ** ACIERTO **  ");
-                    //Tiempo a boton
-                    //Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
-                    //tiempo_boton = CRONOMETRO.tiempoTranscurrido;
-                    //tiempo_boton = minutes + ":" + seconds;
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play ();
                     ACIERTO = 1;
                 } else {
+                    acierto = "no acierto";
                     Debug.Log ("--  NO ACIERTO -- ");
                     //Tiempo a boton
-                    Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
-                    tiempo_boton = CRONOMETRO_PANEL.tiempoTranscurrido;
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play ();
                     ACIERTO = 0;
                 }
-
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log ("INTENTOS =>> " + intentos);
             }
 
@@ -299,22 +284,18 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                 intentos--;
                 if (id_personaje_2 == id_boton_derecha) {
                     Debug.Log (" ** ACIERTO **  ");
-                    //Tiempo a boton
-                    Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
-                    tiempo_boton = CRONOMETRO_PANEL.tiempoTranscurrido;
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play ();
                     ACIERTO = 3;
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
-                    //Tiempo a boton
-                    Debug.Log (CRONOMETRO_PANEL.tiempoTranscurrido);
-                    tiempo_boton = CRONOMETRO_PANEL.tiempoTranscurrido;
                     audioUbicacion.clip = intenta_otra;
                     ACIERTO = 2;
                     audioUbicacion.Play ();
                 }
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log ("INTENTOS =>> " + intentos);
+                
             }
 
         }
@@ -329,7 +310,16 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         if (tocar_boton_izquierdo) {
             valorIzquierda++;
         }
+        if (valorIzquierda == 1)
+        {
+            finalisarReloj();
+            tiempo_cuadrado = timerText.text;
+            Debug.Log(tiempo_cuadrado);
+            reinicioReloj();
+        }
         if (valorIzquierda >= 100) {
+            tiempo_boton = timerText.text;
+            Debug.Log(tiempo_boton);
             InstanciarIzq ();
             //btn_izquierda.GetComponent<Renderer>().material.color = Color.red;
             tocar_boton_izquierdo = false;
@@ -354,6 +344,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                     audioUbicacion.Play ();
                     ACIERTO = 0;
                 }
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log ("INTENTOS =>> " + intentos);
             } else {
                 Debug.Log ("Se acabaron los Intentos");
@@ -372,6 +363,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                     audioUbicacion.Play ();
                     ACIERTO = 2;
                 }
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log ("INTENTOS =>> " + intentos);
             } else {
                 Debug.Log ("Se acabaron los intentos");
@@ -388,6 +380,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
         if (valorContinuar >= 100) {
+            reinicioReloj();
+            iniciarReloj();
             txtcontinuar.text = "";
             btnMsg.SetActive (false);
             btn_izquierda.SetActive (true);
@@ -443,7 +437,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         txtSalir.text = "SALIR " + valorContinuar;
         if (valorContinuar >= 100) {
             valorContinuar = 0;
-            SceneManager.LoadScene (15);
+            SceneManager.LoadScene (15);     
         }
 
     }
@@ -470,8 +464,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         yield return new WaitForSeconds (audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_1;
         audioUbicacion.Play ();
-        //INICIAR TIEMPO 1
-        TimerStart ();
+
 
     }
 
@@ -484,13 +477,13 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         audioUbicacion.Play ();
     }
 
-    public void saveAcierto (int id_detalle_aprendizaje, string time1, string time2, string time3, int acierto) {
+    public void saveAcierto (int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto) {
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
         dbconn = (IDbConnection) new SqliteConnection (conn);
         dbconn.Open ();
         IDbCommand dbcmd = dbconn.CreateCommand ();
-        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendozaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "' )";
+        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "' )";
         dbcmd.CommandText = sqlQuery;
         dbcmd.ExecuteReader ();
         Debug.Log ("Datos Guardados Corectamente!..");
@@ -517,7 +510,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
 
     public void reinicioReloj()
     {
-        startTime = 0.0f;
+        timerText.text = "00" + ":" + "00";
     }
 
     public void finalisarReloj()
@@ -525,5 +518,4 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         finalisacion = true;
         timerText.color = Color.yellow;
     }
-
 }
