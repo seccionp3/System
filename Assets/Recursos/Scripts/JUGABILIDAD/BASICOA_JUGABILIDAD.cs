@@ -49,33 +49,33 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     private Texture2D texturaIzquierda;
     public GameObject btn_derecha;
     private Texture2D texturaDerecha;
-    rgb colorIzq = new rgb ();
-    rgb colorDer = new rgb ();
-    private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt (0);
-    private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt (1);
+    rgb colorIzq = new rgb();
+    rgb colorDer = new rgb();
+    private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(0);
+    private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(1);
 
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         iniciarReloj();
-        texturaIzquierda = new Texture2D (256, 256);
-        texturaDerecha = new Texture2D (256, 256);
+        texturaIzquierda = new Texture2D(256, 256);
+        texturaDerecha = new Texture2D(256, 256);
         txtcontinuar.text = "";
         txtFinal.text = "";
-        btnSalir.SetActive (false);
+        btnSalir.SetActive(false);
         txtSalir.text = "";
-        btnMsg.SetActive (false);
-        Debug.Log (codigo_detalle_aprendizaje_1);
-        Debug.Log (codigo_detalle_aprendizaje_2);
-        imgA = panelA.GetComponent<Image> ();
-        imgB = panelB.GetComponent<Image> ();
-        obtenerDatos1 (codigo_detalle_aprendizaje_1);
-        obtenerDatos2 (codigo_detalle_aprendizaje_2);
+        btnMsg.SetActive(false);
+        Debug.Log(codigo_detalle_aprendizaje_1);
+        Debug.Log(codigo_detalle_aprendizaje_2);
+        imgA = panelA.GetComponent<Image>();
+        imgB = panelB.GetComponent<Image>();
+        obtenerDatos1(codigo_detalle_aprendizaje_1);
+        obtenerDatos2(codigo_detalle_aprendizaje_2);
 
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         procesoReloj();
         
         if (contador == 0) {
@@ -86,224 +86,241 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                 Debug.Log(tiempo_reaccion);
                 reinicioReloj();
                 iniciarReloj();
-                contador ++;
+                contador++;
             }
         }
-     
+
     }
 
 
-    public void siguienteElemento () {
+    public void siguienteElemento() {
 
     }
 
     //colores guardados.
-    private void obtenerDatos1 (int id) {
-        Debug.Log ("funcion con id " + id);
+    private void obtenerDatos1(int id) {
+        Debug.Log("funcion con id " + id);
         byte[] son = new byte[0];
         byte[] imagen_personaje = new byte[0];
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
-        dbconn = (IDbConnection) new SqliteConnection (conn);
-        dbconn.Open ();
-        IDbCommand dbcmd = dbconn.CreateCommand ();
+        dbconn = (IDbConnection)new SqliteConnection(conn);
+        dbconn.Open();
+        IDbCommand dbcmd = dbconn.CreateCommand();
         string sqlQuery;
 
         sqlQuery = "select t2.r_color, t2.g_color, t2.b_color, t3.id_personaje, t4.nombre_ubicacion,  t3.audio_personaje, t3.imagen_personaje from detalle_aprendizaje as t1 inner join color as t2 on t2.id = t1.id_color inner join personaje as t3 on t1.id_personaje = t3.id_personaje inner join ubicacion as t4 on t1.id_ubicacion = t4.id where t1.id_detalle_apre = " + id;
         //"select color.r_color, color.g_color, color.b_color, ubicacion.nombre_ubicacion, tpersonaje.audio_personaje, tpersonaje.imagen_personaje from detalle_aprendizaje  as detalle_aprendizaje inner join color on color.id = id_color inner join ubicacion on ubicacion.id = id_ubicacion inner join personaje as tpersonaje on tpersonaje.id_personaje = detalle_aprendizaje.id_personaje where id_detalle_apre = " + id;
-        Debug.Log (sqlQuery);
+        Debug.Log(sqlQuery);
         dbcmd.CommandText = sqlQuery;
-        IDataReader reader = dbcmd.ExecuteReader ();
-        while (reader.Read ()) {
-            nombre_ubicacion = reader.GetString (4);
-            id_personaje_1 = reader.GetInt32 (3);
-            imagen_personaje = (byte[]) reader["imagen_personaje"];
-            son = (byte[]) reader["audio_personaje"];
+        IDataReader reader = dbcmd.ExecuteReader();
+        while (reader.Read()) {
+            nombre_ubicacion = reader.GetString(4);
+            id_personaje_1 = reader.GetInt32(3);
+            imagen_personaje = (byte[])reader["imagen_personaje"];
+            son = (byte[])reader["audio_personaje"];
             if (nombre_ubicacion == "derecha") {
                 id_boton_derecha = id_personaje_1;
-                colorDer.r = reader.GetInt32 (0);
-                colorDer.g = reader.GetInt32 (1);
-                colorDer.b = reader.GetInt32 (2);
+                colorDer.r = reader.GetInt32(0);
+                colorDer.g = reader.GetInt32(1);
+                colorDer.b = reader.GetInt32(2);
             } else {
                 id_boton_izquierda = id_personaje_1;
-                colorIzq.r = reader.GetInt32 (0);
-                colorIzq.g = reader.GetInt32 (1);
-                colorIzq.b = reader.GetInt32 (2);
+                colorIzq.r = reader.GetInt32(0);
+                colorIzq.g = reader.GetInt32(1);
+                colorIzq.b = reader.GetInt32(2);
             }
         }
-        Debug.Log (colorIzq.r);
-        WAV sonido = new WAV (son);
-        audio_personaje_1 = AudioClip.Create ("personaje_1", sonido.SampleCount, 1, sonido.Frequency, false, false);
-        audio_personaje_1.SetData (sonido.LeftChannel, 0);
+        Debug.Log(colorIzq.r);
+        WAV sonido = new WAV(son);
+        audio_personaje_1 = AudioClip.Create("personaje_1", sonido.SampleCount, 1, sonido.Frequency, false, false);
+        audio_personaje_1.SetData(sonido.LeftChannel, 0);
         if (nombre_ubicacion == "derecha") {
-            texturaDerecha.LoadImage (imagen_personaje);
+            texturaDerecha.LoadImage(imagen_personaje);
         } else {
-            texturaIzquierda.LoadImage (imagen_personaje);
+            texturaIzquierda.LoadImage(imagen_personaje);
         }
-        reader.Close ();
+        reader.Close();
         reader = null;
-        dbcmd.Dispose ();
+        dbcmd.Dispose();
         dbcmd = null;
-        dbconn.Close ();
-        Debug.Log ("Ya salio de la base de datos");
+        dbconn.Close();
+        Debug.Log("Ya salio de la base de datos");
         nombre_ubicacion = "";
-        StartCoroutine (playsound ());
+        StartCoroutine(playsound());
     }
-    private void obtenerDatos2 (int id) {
+    private void obtenerDatos2(int id) {
         byte[] son = new byte[0];
         byte[] imagen_personaje = new byte[0];
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
-        dbconn = (IDbConnection) new SqliteConnection (conn);
-        dbconn.Open ();
-        IDbCommand dbcmd = dbconn.CreateCommand ();
+        dbconn = (IDbConnection)new SqliteConnection(conn);
+        dbconn.Open();
+        IDbCommand dbcmd = dbconn.CreateCommand();
         string sqlQuery;
         sqlQuery = "select t2.r_color, t2.g_color, t2.b_color, t3.id_personaje, t4.nombre_ubicacion,  t3.audio_personaje, t3.imagen_personaje from detalle_aprendizaje as t1 inner join color as t2 on t2.id = t1.id_color inner join personaje as t3 on t1.id_personaje = t3.id_personaje inner join ubicacion as t4 on t1.id_ubicacion = t4.id where t1.id_detalle_apre = " + id;
-        Debug.Log (sqlQuery);
+        Debug.Log(sqlQuery);
         dbcmd.CommandText = sqlQuery;
-        IDataReader reader = dbcmd.ExecuteReader ();
-        while (reader.Read ()) {
-            id_personaje_2 = reader.GetInt32 (3);
-            nombre_ubicacion = reader.GetString (4);
-            son = (byte[]) reader["audio_personaje"];
-            imagen_personaje = (byte[]) reader["imagen_personaje"];
-            Debug.Log (id_personaje_2);
+        IDataReader reader = dbcmd.ExecuteReader();
+        while (reader.Read()) {
+            id_personaje_2 = reader.GetInt32(3);
+            nombre_ubicacion = reader.GetString(4);
+            son = (byte[])reader["audio_personaje"];
+            imagen_personaje = (byte[])reader["imagen_personaje"];
+            Debug.Log(id_personaje_2);
             if (nombre_ubicacion == "derecha") {
                 id_boton_derecha = id_personaje_2;
-                colorDer.r = reader.GetInt32 (0);
-                colorDer.g = reader.GetInt32 (1);
-                colorDer.b = reader.GetInt32 (2);
+                colorDer.r = reader.GetInt32(0);
+                colorDer.g = reader.GetInt32(1);
+                colorDer.b = reader.GetInt32(2);
             } else {
                 id_boton_izquierda = id_personaje_2;
-                colorIzq.r = reader.GetInt32 (0);
-                colorIzq.g = reader.GetInt32 (1);
-                colorIzq.b = reader.GetInt32 (2);
+                colorIzq.r = reader.GetInt32(0);
+                colorIzq.g = reader.GetInt32(1);
+                colorIzq.b = reader.GetInt32(2);
             }
         }
-        WAV sonido = new WAV (son);
-        audio_personaje_2 = AudioClip.Create ("personaje_2", sonido.SampleCount, 1, sonido.Frequency, false, false);
-        audio_personaje_2.SetData (sonido.LeftChannel, 0);
+        WAV sonido = new WAV(son);
+        audio_personaje_2 = AudioClip.Create("personaje_2", sonido.SampleCount, 1, sonido.Frequency, false, false);
+        audio_personaje_2.SetData(sonido.LeftChannel, 0);
         if (nombre_ubicacion == "derecha") {
-            texturaDerecha.LoadImage (imagen_personaje);
+            texturaDerecha.LoadImage(imagen_personaje);
         } else {
-            texturaIzquierda.LoadImage (imagen_personaje);
+            texturaIzquierda.LoadImage(imagen_personaje);
         }
-        reader.Close ();
+        reader.Close();
         reader = null;
-        dbcmd.Dispose ();
+        dbcmd.Dispose();
         dbcmd = null;
-        dbconn.Close ();
+        dbconn.Close();
 
     }
-    public void interaccionPanelA () {
+    public void interaccionPanelA() {
         //Debug.Log( "Tiempo del Cronometro = " + CRONOMETRO.cuentaAtras );
-        imgA.color = new Color (colorIzq.r, colorIzq.g, colorIzq.b);
+        imgA.color = new Color(colorIzq.r, colorIzq.g, colorIzq.b);
         // Guardar tiempo uno;
-        Debug.Log (CRONOMETRO.tiempoTranscurrido);
+        Debug.Log(CRONOMETRO.tiempoTranscurrido);
         if (tiempo_cuadrado == null) {
             tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
-            CRONOMETRO_PANEL.TimerStart ();
+            CRONOMETRO_PANEL.TimerStart();
         }
 
     }
-    public void interaccionPanelASalir () {
-        imgA.color = new Color (255, 255, 255);
+    public void interaccionPanelASalir() {
+        imgA.color = new Color(255, 255, 255);
         // Guardar tiempo uno;
 
     }
 
-    public void interccionPanelB () {
-        imgB.color = new Color (colorDer.r, colorDer.g, colorDer.b);
-        Debug.Log (CRONOMETRO.tiempoTranscurrido);
+    public void interccionPanelB() {
+        imgB.color = new Color(colorDer.r, colorDer.g, colorDer.b);
+        Debug.Log(CRONOMETRO.tiempoTranscurrido);
         if (tiempo_cuadrado == null) {
             tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
-            CRONOMETRO_PANEL.TimerStart ();
+            CRONOMETRO_PANEL.TimerStart();
         }
     }
-    public void interccionPanelBSalir () {
-        imgB.color = new Color (255, 255, 255);
+    public void interccionPanelBSalir() {
+        imgB.color = new Color(255, 255, 255);
     }
 
-    public void VerPersonaje1 () {
+    public void VerPersonaje1() {
         //btn_izquierda.GetComponent<Image>().sprite = Sprite.Create(texturaIzquierda, new Rect(0,0,256,256), new Vector2(0.5f,0.5f));
     }
 
-    public void VerPersonaje2 () {
+    public void VerPersonaje2() {
         //btn_derecha.GetComponent<Image>().sprite = Sprite.Create(texturaDerecha, new Rect(0,0,256,256), new Vector2(0.5f,0.5f));
     }
 
-    public void botonderecho () {
+    public void botonderecho() {
 
         valorContinuar = 0;
         valorIzquierda = 0;
         tocar_boton_izquierdo = true;
-        if (tocar_boton_derecho) {
+        if (tocar_boton_derecho)
+        {
             valorDerecha++;
         }
-        if (valorDerecha == 1) {
+        if (valorDerecha == 1)
+        {
             finalisarReloj();
             tiempo_cuadrado = timerText.text;
             Debug.Log(tiempo_cuadrado);
             reinicioReloj();
         }
-        if (valorDerecha >= 100) {
+        if (valorDerecha >= 20)
+        {
             tiempo_boton = timerText.text;
             Debug.Log(tiempo_boton);
             //btn_derecha.GetComponent<Renderer>().material.color = Color.red;
             tocar_boton_derecho = false;
             //Indicar Imagen
-            InstanciarDer ();
-            btn_izquierda.SetActive (false);
-            btn_derecha.SetActive (false);
-            reiniciar ();
-            btnMsg.SetActive (true);
+            InstanciarDer();
+            btn_izquierda.SetActive(false);
+            btn_derecha.SetActive(false);
+            reiniciar();
+            btnMsg.SetActive(true);
             txtcontinuar.text = "CONTINUAR ";
 
-            Debug.Log (" ID DERECHA  " + id_boton_derecha);
-            if (estado_juego == 1 && intentos > 0) {
+            Debug.Log(" ID DERECHA  " + id_boton_derecha);
+            if (estado_juego == 1 && intentos > 0)
+            {
                 intentos--;
-                if (id_personaje_1 == id_boton_derecha) {
-                    acierto = "acierto";
-                    Debug.Log (" ** ACIERTO **  ");
-                    audioUbicacion.clip = correcto;
-                    audioUbicacion.Play ();
-                    ACIERTO = 1;
-                } else {
-                    acierto = "no acierto";
-                    Debug.Log ("--  NO ACIERTO -- ");
-                    //Tiempo a boton
-                    audioUbicacion.clip = intenta_otra;
-                    audioUbicacion.Play ();
-                    ACIERTO = 0;
-                }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                Debug.Log ("INTENTOS =>> " + intentos);
-            }
+                    if (id_personaje_1 == id_boton_derecha)
+                    {
+                        acierto = "acierto";
+                        Debug.Log(" ** ACIERTO **  ");
+                        audioUbicacion.clip = correcto;
+                        audioUbicacion.Play();
+                        ACIERTO = 1;
+                        btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
+                    }
+                    else
+                    {
+                        acierto = "no acierto";
+                        Debug.Log("--  NO ACIERTO -- ");
+                        //Tiempo a boton
+                        audioUbicacion.clip = intenta_otra;
+                        audioUbicacion.Play();
+                        ACIERTO = 0;
+                    }
+                    saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                    Debug.Log("INTENTOS =>> " + intentos);
 
-            if (estado_juego == 2 && intentos > 0) {
-                intentos--;
-                if (id_personaje_2 == id_boton_derecha) {
-                    Debug.Log (" ** ACIERTO **  ");
-                    audioUbicacion.clip = correcto;
-                    audioUbicacion.Play ();
-                    ACIERTO = 3;
-                } else {
-                    Debug.Log ("--  NO ACIERTO -- ");
-                    audioUbicacion.clip = intenta_otra;
-                    ACIERTO = 2;
-                    audioUbicacion.Play ();
+
+                if (estado_juego == 2 && intentos > 0)
+                {
+                    intentos--;
+                    if (id_personaje_2 == id_boton_derecha)
+                    {
+                        acierto = "acierto";
+                        Debug.Log(" ** ACIERTO **  ");
+                        audioUbicacion.clip = correcto;
+                        audioUbicacion.Play();
+                        ACIERTO = 3;
+                    }
+                    else
+                    {
+                        acierto = "no acierto";
+                        Debug.Log("--  NO ACIERTO -- ");
+                        audioUbicacion.clip = intenta_otra;
+                        ACIERTO = 2;
+                        audioUbicacion.Play();
+                    }
+                    saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                    Debug.Log("INTENTOS =>> " + intentos);
+
                 }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                Debug.Log ("INTENTOS =>> " + intentos);
-                
             }
+                
 
         }
         tiempo_boton_Derecha.text = "" + valorDerecha;
         tiempo_boton_Izquierda.text = "" + valorIzquierda;
+        
     }
 
-    public void botonIzquierdo () {
+    public void botonIzquierdo() {
         valorContinuar = 0;
         valorDerecha = 0;
         tocar_boton_derecho = true;
@@ -317,102 +334,121 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             Debug.Log(tiempo_cuadrado);
             reinicioReloj();
         }
-        if (valorIzquierda >= 100) {
+        if (valorIzquierda >= 20) {
             tiempo_boton = timerText.text;
             Debug.Log(tiempo_boton);
-            InstanciarIzq ();
+            InstanciarIzq();
             //btn_izquierda.GetComponent<Renderer>().material.color = Color.red;
             tocar_boton_izquierdo = false;
             //Ocultar Botones
-            btn_izquierda.SetActive (false);
-            btn_derecha.SetActive (false);
-            reiniciar ();
-            btnMsg.SetActive (true);
+            btn_izquierda.SetActive(false);
+            btn_derecha.SetActive(false);
+            reiniciar();
+            btnMsg.SetActive(true);
             txtcontinuar.text = "CONTINUAR ";
 
-            Debug.Log (" id izquierda " + id_boton_izquierda);
-            if (estado_juego == 1 && intentos > 0) {
+            Debug.Log(" id izquierda " + id_boton_izquierda);
+            if (estado_juego == 1 && intentos > 0)
+            {
                 intentos--;
-                if (id_personaje_1 == id_boton_izquierda) {
-                    Debug.Log (" ** ACIERTO **  ");
+                    
+                if (id_personaje_1 == id_boton_izquierda)
+                {
+                    acierto = "acierto";
+                    Debug.Log(" ** ACIERTO **  ");
                     audioUbicacion.clip = correcto;
-                    audioUbicacion.Play ();
+                    audioUbicacion.Play();
                     ACIERTO = 1;
-                } else {
-                    Debug.Log ("--  NO ACIERTO -- ");
+
+                }
+                else
+                {
+                    acierto = "no acierto";
+                    Debug.Log("--  NO ACIERTO -- ");
                     audioUbicacion.clip = intenta_otra;
-                    audioUbicacion.Play ();
+                    audioUbicacion.Play();
                     ACIERTO = 0;
                 }
                 saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                Debug.Log ("INTENTOS =>> " + intentos);
+                Debug.Log("INTENTOS =>> " + intentos);
             } else {
-                Debug.Log ("Se acabaron los Intentos");
+                Debug.Log("Se acabaron los Intentos");
             }
 
-            if (estado_juego == 2 && intentos > 0) {
+            if (estado_juego == 2 && intentos > 0)
+            {
                 intentos--;
-                if (id_personaje_2 == id_boton_izquierda) {
-                    Debug.Log (" ** ACIERTO **  ");
+                if (id_personaje_2 == id_boton_izquierda)
+                {
+                    acierto = "acierto";
+                    Debug.Log(" ** ACIERTO **  ");
                     audioUbicacion.clip = correcto;
-                    audioUbicacion.Play ();
+                    audioUbicacion.Play();
                     ACIERTO = 3;
-                } else {
-                    Debug.Log ("--  NO ACIERTO -- ");
+                }
+                else
+                {
+                    acierto = "no acierto";
+                    Debug.Log("--  NO ACIERTO -- ");
                     audioUbicacion.clip = intenta_otra;
-                    audioUbicacion.Play ();
+                    audioUbicacion.Play();
                     ACIERTO = 2;
                 }
                 saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                Debug.Log ("INTENTOS =>> " + intentos);
-            } else {
-                Debug.Log ("Se acabaron los intentos");
+                Debug.Log("INTENTOS =>> " + intentos);
+            }
+            else
+            {
+                Debug.Log("Se acabaron los intentos");
             }
 
         }
         tiempo_boton_Derecha.text = "" + valorDerecha;
         tiempo_boton_Izquierda.text = "" + valorIzquierda;
+               
+            
     }
 
-    public void continuar () {
+    public void continuar() {
         tiempo_boton_Derecha.text = "";
         tiempo_boton_Izquierda.text = "";
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
-        if (valorContinuar >= 100) {
+        if (valorContinuar >= 20) {
             reinicioReloj();
             iniciarReloj();
             txtcontinuar.text = "";
-            btnMsg.SetActive (false);
-            btn_izquierda.SetActive (true);
-            btn_derecha.SetActive (true);
+            btnMsg.SetActive(false);
+            btn_izquierda.SetActive(true);
+            btn_derecha.SetActive(true);
             if (pos_btn_A != null) {
-                pos_btn_A.gameObject.SetActive (false);
+                pos_btn_A.gameObject.SetActive(false);
             }
             if (pos_btn_B != null) {
-                pos_btn_B.gameObject.SetActive (false);
+                pos_btn_B.gameObject.SetActive(false);
             }
 
             if (ACIERTO == 0 && intentos > 0) {
-                StartCoroutine (playsound ());
+                StartCoroutine(playsound());
+                
             }
 
             if (ACIERTO == 1 && intentos > 0) {
-                StartCoroutine (playsound2 ());
+                StartCoroutine(playsound2());
                 estado_juego = 2;
             }
 
             if (ACIERTO == 2 && intentos > 0) {
-                StartCoroutine (playsound2 ());
+                StartCoroutine(playsound2());
                 estado_juego = 2;
             }
 
             if (intentos <= 0 || ACIERTO == 3) {
-                Debug.Log ("Se acabaron tus intentos");
-                btn_izquierda.SetActive (false);
-                btn_derecha.SetActive (false);
+                Debug.Log("Se acabaron tus intentos");
+                btn_izquierda.SetActive(false);
+                btn_derecha.SetActive(false);
                 txtFinal.text = "Fase terminada... presiona en continuar";
-                btnSalir.SetActive (true);
+                btnSalir.SetActive(true);
                 txtSalir.text = "Salir ";
                 valorContinuar = 0;
             }
@@ -420,7 +456,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         }
     }
 
-    void reiniciar () {
+    void reiniciar() {
         valorDerecha = 0;
         valorIzquierda = 0;
         //btn_izquierda.GetComponent<Renderer>().material.color = Color.gray;
@@ -431,65 +467,65 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         tiempo_boton_Izquierda.text = "A";
     }
 
-    public void botonSalir () {
+    public void botonSalir() {
 
         valorContinuar++;
         txtSalir.text = "SALIR " + valorContinuar;
         if (valorContinuar >= 100) {
             valorContinuar = 0;
-            SceneManager.LoadScene (15);     
+            SceneManager.LoadScene(15);
         }
 
     }
 
-    public void InstanciarIzq () {
-        btnPrincipal.GetComponent<Image> ().sprite = Sprite.Create (texturaIzquierda, new Rect (0, 0, 256, 256), new Vector2 (0.5f, 0.5f));
-        GameObject btnIzq = Instantiate (btnPrincipal.gameObject, new Vector3 (-0.1f, 0f, 0.1f), transform.rotation);
-        btnIzq.transform.SetParent (this.transform);
-        btnIzq.transform.localScale = new Vector3 (1f, 1f, 0f);
-        pos_btn_A = btnIzq.GetComponent<Transform> ();
+    public void InstanciarIzq() {
+        btnPrincipal.GetComponent<Image>().sprite = Sprite.Create(texturaIzquierda, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
+        GameObject btnIzq = Instantiate(btnPrincipal.gameObject, new Vector3(-0.1f, 0f, 0.1f), transform.rotation);
+        btnIzq.transform.SetParent(this.transform);
+        btnIzq.transform.localScale = new Vector3(1f, 1f, 0f);
+        pos_btn_A = btnIzq.GetComponent<Transform>();
     }
-    public void InstanciarDer () {
-        btnPrincipal.GetComponent<Image> ().sprite = Sprite.Create (texturaDerecha, new Rect (0, 0, 256, 256), new Vector2 (0.5f, 0.5f));
-        GameObject btnDer = Instantiate (btnPrincipal.gameObject, new Vector3 (0.1f, 0f, 0.1f), transform.rotation);
-        btnDer.transform.SetParent (this.transform);
-        btnDer.transform.localScale = new Vector3 (1f, 1f, 0f);
-        pos_btn_B = btnDer.GetComponent<Transform> ();
+    public void InstanciarDer() {
+        btnPrincipal.GetComponent<Image>().sprite = Sprite.Create(texturaDerecha, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
+        GameObject btnDer = Instantiate(btnPrincipal.gameObject, new Vector3(0.1f, 0f, 0.1f), transform.rotation);
+        btnDer.transform.SetParent(this.transform);
+        btnDer.transform.localScale = new Vector3(1f, 1f, 0f);
+        pos_btn_B = btnDer.GetComponent<Transform>();
     }
 
-    IEnumerator playsound () {
-        Debug.Log ("reproducuiendo......");
+    IEnumerator playsound() {
+        Debug.Log("reproducuiendo......");
         audioUbicacion.clip = donde_esta;
-        audioUbicacion.Play ();
-        yield return new WaitForSeconds (audioUbicacion.clip.length);
+        audioUbicacion.Play();
+        yield return new WaitForSeconds(audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_1;
-        audioUbicacion.Play ();
+        audioUbicacion.Play();
 
 
     }
 
-    IEnumerator playsound2 () {
-        Debug.Log ("reproducuiendo......");
+    IEnumerator playsound2() {
+        Debug.Log("reproducuiendo......");
         audioUbicacion.clip = donde_esta;
-        audioUbicacion.Play ();
-        yield return new WaitForSeconds (audioUbicacion.clip.length);
+        audioUbicacion.Play();
+        yield return new WaitForSeconds(audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_2;
-        audioUbicacion.Play ();
+        audioUbicacion.Play();
     }
 
-    public void saveAcierto (int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto) {
+    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto) {
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
-        dbconn = (IDbConnection) new SqliteConnection (conn);
-        dbconn.Open ();
-        IDbCommand dbcmd = dbconn.CreateCommand ();
+        dbconn = (IDbConnection)new SqliteConnection(conn);
+        dbconn.Open();
+        IDbCommand dbcmd = dbconn.CreateCommand();
         string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "' )";
         dbcmd.CommandText = sqlQuery;
-        dbcmd.ExecuteReader ();
-        Debug.Log ("Datos Guardados Corectamente!..");
-        dbcmd.Dispose ();
+        dbcmd.ExecuteReader();
+        Debug.Log("Datos Guardados Corectamente!..");
+        dbcmd.Dispose();
         dbcmd = null;
-        dbconn.Close ();
+        dbconn.Close();
         dbconn = null;
     }
 
@@ -518,4 +554,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         finalisacion = true;
         timerText.color = Color.yellow;
     }
+
+
 }
