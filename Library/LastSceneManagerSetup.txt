@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/INICIO.unity
+- path: Assets/Scenes/JUGABILIDAD/AVANZADO_JUGABILIDAD.unity
   isLoaded: 1
   isActive: 1
