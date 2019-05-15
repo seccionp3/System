@@ -367,8 +367,6 @@ public class AVANZADO_JUGABILIDAD : MonoBehaviour {
 		yield return new WaitForSeconds (audioUbicacion.clip.length);
 		audioUbicacion.clip = sonido;
 		audioUbicacion.Play ();
-		//INICIAR TIEMPO 1
-		CRONOMETRO.TimerStart();
 	}
 
 

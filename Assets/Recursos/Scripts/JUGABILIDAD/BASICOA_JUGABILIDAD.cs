@@ -54,6 +54,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(0);
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(1);
 
+    //Instanciar CLASE COORDENADAS
 
     // Use this for initialization
     void Start() {
@@ -199,12 +200,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         //Debug.Log( "Tiempo del Cronometro = " + CRONOMETRO.cuentaAtras );
         imgA.color = new Color(colorIzq.r, colorIzq.g, colorIzq.b);
         // Guardar tiempo uno;
-        Debug.Log(CRONOMETRO.tiempoTranscurrido);
-        if (tiempo_cuadrado == null) {
-            tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
-            CRONOMETRO_PANEL.TimerStart();
-        }
-
     }
     public void interaccionPanelASalir() {
         imgA.color = new Color(255, 255, 255);
@@ -214,11 +209,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
 
     public void interccionPanelB() {
         imgB.color = new Color(colorDer.r, colorDer.g, colorDer.b);
-        Debug.Log(CRONOMETRO.tiempoTranscurrido);
-        if (tiempo_cuadrado == null) {
-            tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
-            CRONOMETRO_PANEL.TimerStart();
-        }
     }
     public void interccionPanelBSalir() {
         imgB.color = new Color(255, 255, 255);

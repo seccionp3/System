@@ -323,8 +323,7 @@
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\BASICOA_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\BASICOB_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\CONTACTO_BOTON.cs" />
-    <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\CRONOMETRO.cs" />
-    <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\CRONOMETRO_PANEL.cs" />
+    <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\COORDENADAS.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\INTERMEDIO_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\LOGIN_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\SELEC_LEVEL_JUGABILIDAD.cs" />
