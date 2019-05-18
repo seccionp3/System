@@ -13,7 +13,7 @@ public class COORDENADAS : MonoBehaviour
 	private float secondsCounter=1 , secondstoCounter=1;
 	private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log,seconds;
     private int nombre_nivel = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(0), number=0;
-    private string posicion_x, posicion_y, posicion_z;
+    public static string posicion_x, posicion_y, posicion_z;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +39,7 @@ public class COORDENADAS : MonoBehaviour
         provider = FindObjectOfType<LeapProvider>() as LeapProvider;
     }
 
-	public Vector procesoBusqueda() {
+	public void procesoBusqueda() {
         Frame frame = provider.CurrentFrame;
         Hand hand = frame.Hands[0];
         Vector position = hand.PalmPosition;
@@ -48,7 +48,6 @@ public class COORDENADAS : MonoBehaviour
         posicion_y = position.y.ToString();
         posicion_z = position.z.ToString();
         Debug.Log("La posicion de la mano es:" + position + "La direccion de la mano es:" + direction);
-		return position;
     }
 
     public void savePosicion(string nombre_usuario, string posicion_x, string posicion_y, string posicion_z, int nombre_nivel)
