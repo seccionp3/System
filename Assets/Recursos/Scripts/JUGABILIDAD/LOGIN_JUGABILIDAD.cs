@@ -108,6 +108,7 @@ public class LOGIN_JUGABILIDAD : MonoBehaviour {
             //txtPass.text = "";
         } else {
             Debug.Log ("Si tiene niveles registrados hoy.");
+
             verificarNiveles (codigo_aprendizaje);
         }
     }
@@ -169,5 +170,6 @@ public class LOGIN_JUGABILIDAD : MonoBehaviour {
     public void menuInicial(){
         SceneManager.LoadScene (0);
     }
+
 
 }

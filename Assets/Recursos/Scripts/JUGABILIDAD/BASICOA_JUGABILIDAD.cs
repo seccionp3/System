@@ -9,10 +9,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class BASICOA_JUGABILIDAD : MonoBehaviour {
+public class BASICOA_JUGABILIDAD : MonoBehaviour
+{
 
     //Tiempos
-    public string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
+    private string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
     public Text timerText;
     private float startTime;
     public GameObject HandRight;
@@ -20,12 +21,14 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     private bool finalisacion = false;
     private int contador = 0;
 
+
     public int acierto_bd;
     public Text txtSalir;
     public GameObject btnSalir;
     public Text txtFinal;
+    public int intentos_boton_seleccionado = 0;
+	private int intentos_fallos = 0;
     private int intentos = 3;
-    private int intentos_boton_seleccionado = 0;
     private int estado_juego = 1; // 1 personaje 1 o 2 personaje 2
     private String nombre_ubicacion;
     private int id_personaje_1, id_personaje_2, id_boton_derecha, id_boton_izquierda;
@@ -41,9 +44,9 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     public RectTransform panelA, panelB;
     private Image imgA, imgB;
     public AudioSource audioUbicacion;
-    public AudioClip donde_esta, audio_personaje_1, audio_personaje_2,seleciona_otra_vez;
+    public AudioClip donde_esta, audio_personaje_1, audio_personaje_2;
 
-    public AudioClip correcto, intenta_otra;
+    public AudioClip correcto, intenta_otra, seleciona_otra_vez;
 
     public GameObject btnMsg;
     public GameObject btn_izquierda;
@@ -54,13 +57,18 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
     rgb colorDer = new rgb();
     private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(0);
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(1);
+	private int number=0;
 
-    //Instanciar CLASE COORDENADAS
-    public COORDENADAS coordenas;
-
+	//Instanciar Clases
+	public COORDENADAS coordenadas = new COORDENADAS();
+	private float secondsCounter=1 , secondstoCounter=1;
+	private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log,seconds;
+	private string posicion_x, posicion_y, posicion_z;
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         iniciarReloj();
+		coordenadas.iniciarBusqueda ();
         texturaIzquierda = new Texture2D(256, 256);
         texturaDerecha = new Texture2D(256, 256);
         txtcontinuar.text = "";
@@ -74,14 +82,18 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         imgB = panelB.GetComponent<Image>();
         obtenerDatos1(codigo_detalle_aprendizaje_1);
         obtenerDatos2(codigo_detalle_aprendizaje_2);
+        btnPrincipal.GetComponentInChildren<Text>().text = "";
 
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         procesoReloj();
-        
-        if (contador == 0) {
+		coordenadas.procesoBusqueda ();
+		posicion_x = posicion_x.ToString ();
+        if (contador == 0)
+        {
             if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
             {
                 finalisarReloj();
@@ -92,16 +104,24 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
                 contador++;
             }
         }
+		secondsCounter += Time.deltaTime;
+		if(secondsCounter >=  secondstoCounter){
+			//Añasdir Campo Mano
+			coordenadas.savePosicion(nombre_usuario, posicion_x, posicion_y, posicion_z,codigo_detalle_aprendizaje_1);
+			secondsCounter = 0;
+			number++;
+		}
 
     }
 
-
-    public void siguienteElemento() {
+    public void siguienteElemento()
+    {
 
     }
 
     //colores guardados.
-    private void obtenerDatos1(int id) {
+    private void obtenerDatos1(int id)
+    {
         Debug.Log("funcion con id " + id);
         byte[] son = new byte[0];
         byte[] imagen_personaje = new byte[0];
@@ -117,17 +137,21 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         Debug.Log(sqlQuery);
         dbcmd.CommandText = sqlQuery;
         IDataReader reader = dbcmd.ExecuteReader();
-        while (reader.Read()) {
+        while (reader.Read())
+        {
             nombre_ubicacion = reader.GetString(4);
             id_personaje_1 = reader.GetInt32(3);
             imagen_personaje = (byte[])reader["imagen_personaje"];
             son = (byte[])reader["audio_personaje"];
-            if (nombre_ubicacion == "derecha") {
+            if (nombre_ubicacion == "derecha")
+            {
                 id_boton_derecha = id_personaje_1;
                 colorDer.r = reader.GetInt32(0);
                 colorDer.g = reader.GetInt32(1);
                 colorDer.b = reader.GetInt32(2);
-            } else {
+            }
+            else
+            {
                 id_boton_izquierda = id_personaje_1;
                 colorIzq.r = reader.GetInt32(0);
                 colorIzq.g = reader.GetInt32(1);
@@ -138,11 +162,15 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         WAV sonido = new WAV(son);
         audio_personaje_1 = AudioClip.Create("personaje_1", sonido.SampleCount, 1, sonido.Frequency, false, false);
         audio_personaje_1.SetData(sonido.LeftChannel, 0);
-        if (nombre_ubicacion == "derecha") {
+        if (nombre_ubicacion == "derecha")
+        {
             texturaDerecha.LoadImage(imagen_personaje);
-        } else {
+        }
+        else
+        {
             texturaIzquierda.LoadImage(imagen_personaje);
         }
+        playsoundOtravez(audio_personaje_1);
         reader.Close();
         reader = null;
         dbcmd.Dispose();
@@ -152,7 +180,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         nombre_ubicacion = "";
         StartCoroutine(playsound());
     }
-    private void obtenerDatos2(int id) {
+    private void obtenerDatos2(int id)
+    {
         byte[] son = new byte[0];
         byte[] imagen_personaje = new byte[0];
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
@@ -165,18 +194,22 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         Debug.Log(sqlQuery);
         dbcmd.CommandText = sqlQuery;
         IDataReader reader = dbcmd.ExecuteReader();
-        while (reader.Read()) {
+        while (reader.Read())
+        {
             id_personaje_2 = reader.GetInt32(3);
             nombre_ubicacion = reader.GetString(4);
             son = (byte[])reader["audio_personaje"];
             imagen_personaje = (byte[])reader["imagen_personaje"];
             Debug.Log(id_personaje_2);
-            if (nombre_ubicacion == "derecha") {
+            if (nombre_ubicacion == "derecha")
+            {
                 id_boton_derecha = id_personaje_2;
                 colorDer.r = reader.GetInt32(0);
                 colorDer.g = reader.GetInt32(1);
                 colorDer.b = reader.GetInt32(2);
-            } else {
+            }
+            else
+            {
                 id_boton_izquierda = id_personaje_2;
                 colorIzq.r = reader.GetInt32(0);
                 colorIzq.g = reader.GetInt32(1);
@@ -186,9 +219,12 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         WAV sonido = new WAV(son);
         audio_personaje_2 = AudioClip.Create("personaje_2", sonido.SampleCount, 1, sonido.Frequency, false, false);
         audio_personaje_2.SetData(sonido.LeftChannel, 0);
-        if (nombre_ubicacion == "derecha") {
+        if (nombre_ubicacion == "derecha")
+        {
             texturaDerecha.LoadImage(imagen_personaje);
-        } else {
+        }
+        else
+        {
             texturaIzquierda.LoadImage(imagen_personaje);
         }
         reader.Close();
@@ -198,33 +234,54 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         dbconn.Close();
 
     }
-    public void interaccionPanelA() {
+    public void interaccionPanelA()
+    {
         //Debug.Log( "Tiempo del Cronometro = " + CRONOMETRO.cuentaAtras );
         imgA.color = new Color(colorIzq.r, colorIzq.g, colorIzq.b);
         // Guardar tiempo uno;
+        if (tiempo_cuadrado == null)
+        {
+            //tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
+
+        }
+
     }
-    public void interaccionPanelASalir() {
+    public void interaccionPanelASalir()
+    {
         imgA.color = new Color(255, 255, 255);
         // Guardar tiempo uno;
 
     }
 
-    public void interccionPanelB() {
+    public void interccionPanelB()
+    {
         imgB.color = new Color(colorDer.r, colorDer.g, colorDer.b);
+        //Debug.Log(CRONOMETRO.tiempoTranscurrido);
+        if (tiempo_cuadrado == null)
+        {
+
+
+            //tiempo_cuadrado = CRONOMETRO.tiempoTranscurrido;
+
+        }
     }
-    public void interccionPanelBSalir() {
+    public void interccionPanelBSalir()
+    {
         imgB.color = new Color(255, 255, 255);
     }
 
-    public void VerPersonaje1() {
+    public void VerPersonaje1()
+    {
         //btn_izquierda.GetComponent<Image>().sprite = Sprite.Create(texturaIzquierda, new Rect(0,0,256,256), new Vector2(0.5f,0.5f));
     }
 
-    public void VerPersonaje2() {
+    public void VerPersonaje2()
+    {
         //btn_derecha.GetComponent<Image>().sprite = Sprite.Create(texturaDerecha, new Rect(0,0,256,256), new Vector2(0.5f,0.5f));
     }
 
-    public void botonderecho() {
+    public void botonderecho()
+    {
 
         valorContinuar = 0;
         valorIzquierda = 0;
@@ -240,7 +297,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             Debug.Log(tiempo_cuadrado);
             reinicioReloj();
         }
-        if (valorDerecha >= 20)
+        if (valorDerecha >= 100)
         {
             tiempo_boton = timerText.text;
             Debug.Log(tiempo_boton);
@@ -255,114 +312,108 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             txtcontinuar.text = "CONTINUAR ";
 
             Debug.Log(" ID DERECHA  " + id_boton_derecha);
-
-
-
             if (estado_juego == 1 && intentos > 0)
             {
-              
-            
-                    if (id_personaje_1 == id_boton_derecha)
-                    {
-                        acierto = "acierto";
-                        Debug.Log(" ** ACIERTO **  ");
-                        audioUbicacion.clip = correcto;
-                        audioUbicacion.Play();
-                        ACIERTO = 1;
-                        intentos_boton_seleccionado++;
-                        Debug.Log(" **  intentos para boto **  " + intentos_boton_seleccionado);
+                //intentos--;
+                if (id_personaje_1 == id_boton_derecha)
+                {
+                    Debug.Log(" ** ACIERTO **  ");
+                    acierto = "acierto";
+                    audioUbicacion.clip = correcto;
+                    audioUbicacion.Play();
+                    ACIERTO = 1;
+                    intentos_boton_seleccionado++;
+                    Debug.Log(" **  intentos para boto **  " + intentos_boton_seleccionado);
 
                     if (intentos_boton_seleccionado == 1)
                     {
                         btn_derecha.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine( playsoundOtravez() );
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez());
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez());
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
                         intentos--;
-
                     }
-                    
                 }
-                    else
-                    {
-                        acierto = "no acierto";
-                        Debug.Log("--  NO ACIERTO -- ");
-                        //Tiempo a boton
-                        audioUbicacion.clip = intenta_otra;
-                        audioUbicacion.Play();
-                        ACIERTO = 0;
-                    }
-                    saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                    Debug.Log("INTENTOS =>> " + intentos);
-
-
-                if (estado_juego == 2 && intentos > 0)
+                else
                 {
-                    
-                    if (id_personaje_2 == id_boton_derecha)
-                    {
-                        acierto = "acierto";
-                        Debug.Log(" ** ACIERTO **  ");
-                        audioUbicacion.clip = correcto;
-                        audioUbicacion.Play();
-                        ACIERTO = 3;
-                        intentos_boton_seleccionado++;
-                        if (intentos_boton_seleccionado == 1)
-                        {
-                            btn_derecha.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
-                            StartCoroutine(playsoundOtravez());
-                        }
-
-                        if (intentos_boton_seleccionado == 2)
-                        {
-                            btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                            StartCoroutine(playsoundOtravez());
-
-                        }
-                        if (intentos_boton_seleccionado == 3)
-                        {
-                            btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                            StartCoroutine(playsoundOtravez());
-                            intentos--;
-
-                        }
-                    }
-                    else
-                    {
-                        acierto = "no acierto";
-                        Debug.Log("--  NO ACIERTO -- ");
-                        audioUbicacion.clip = intenta_otra;
-                        ACIERTO = 2;
-                        audioUbicacion.Play();
-                    }
-                    saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
-                    Debug.Log("INTENTOS =>> " + intentos);
-
+                    Debug.Log("--  NO ACIERTO -- ");
+                    acierto = "no acierto";
+                    audioUbicacion.clip = intenta_otra;
+                    audioUbicacion.Play();
+					intentos_fallos++;
+                    ACIERTO = 0;
                 }
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                Debug.Log("INTENTOS =>> " + intentos);
             }
-                
+
+            if (estado_juego == 2 && intentos > 0)
+            {
+                //intentos--;
+                if (id_personaje_2 == id_boton_derecha)
+                {
+                    Debug.Log(" ** ACIERTO **  ");
+                    acierto = "acierto";
+                    audioUbicacion.clip = correcto;
+                    audioUbicacion.Play();
+                    ACIERTO = 3;
+                    intentos_boton_seleccionado++;
+                    Debug.Log(" **  intentos para boto **  " + intentos_boton_seleccionado);
+
+                    if (intentos_boton_seleccionado == 1)
+                    {
+                        btn_derecha.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
+                    }
+
+                    if (intentos_boton_seleccionado == 2)
+                    {
+                        btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
+
+                    }
+                    if (intentos_boton_seleccionado == 3)
+                    {
+                        btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        intentos--;
+                    }
+                }
+                else
+                {
+                    Debug.Log("--  NO ACIERTO -- ");
+                    acierto = "no acierto";
+                    audioUbicacion.clip = intenta_otra;
+                    ACIERTO = 2;
+					intentos_fallos++;
+                    audioUbicacion.Play();
+                }
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                Debug.Log("INTENTOS =>> " + intentos);
+            }
 
         }
         tiempo_boton_Derecha.text = "" + valorDerecha;
         tiempo_boton_Izquierda.text = "" + valorIzquierda;
-        
     }
 
-    public void botonIzquierdo() {
+    public void botonIzquierdo()
+    {
         valorContinuar = 0;
         valorDerecha = 0;
         tocar_boton_derecho = true;
-        if (tocar_boton_izquierdo) {
+        if (tocar_boton_izquierdo)
+        {
             valorIzquierda++;
         }
         if (valorIzquierda == 1)
@@ -372,7 +423,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             Debug.Log(tiempo_cuadrado);
             reinicioReloj();
         }
-        if (valorIzquierda >= 20) {
+        if (valorIzquierda >= 100)
+        {
             tiempo_boton = timerText.text;
             Debug.Log(tiempo_boton);
             InstanciarIzq();
@@ -388,90 +440,93 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
             Debug.Log(" id izquierda " + id_boton_izquierda);
             if (estado_juego == 1 && intentos > 0)
             {
-                
-                    
+                //intentos--;
                 if (id_personaje_1 == id_boton_izquierda)
                 {
-                    acierto = "acierto";
                     Debug.Log(" ** ACIERTO **  ");
+                    acierto = "acierto";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
                     ACIERTO = 1;
                     intentos_boton_seleccionado++;
+                    Debug.Log(" **  intentos para boto **  " + intentos_boton_seleccionado);
+
                     if (intentos_boton_seleccionado == 1)
                     {
                         btn_izquierda.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
+                        StartCoroutine(playsoundOtravez(audio_personaje_1));
                         intentos--;
-
                     }
                 }
                 else
                 {
-                    acierto = "no acierto";
                     Debug.Log("--  NO ACIERTO -- ");
+                    acierto = "no acierto";
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play();
                     ACIERTO = 0;
+					intentos_fallos++;
                 }
                 saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log("INTENTOS =>> " + intentos);
-            } else {
+            }
+            else
+            {
                 Debug.Log("Se acabaron los Intentos");
             }
 
             if (estado_juego == 2 && intentos > 0)
             {
-                
+                //intentos--;
                 if (id_personaje_2 == id_boton_izquierda)
                 {
-                    acierto = "acierto";
                     Debug.Log(" ** ACIERTO **  ");
+                    acierto = "acierto";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
                     ACIERTO = 3;
                     intentos_boton_seleccionado++;
-                    Debug.Log("intentos del boton ===>  " + intentos_boton_seleccionado);
+                    Debug.Log(" **  intentos para boto **  " + intentos_boton_seleccionado);
+
                     if (intentos_boton_seleccionado == 1)
                     {
                         btn_izquierda.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
-                        StartCoroutine(playsoundOtravez2());
-                        intentos--;  
-
+                        StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        intentos--;
                     }
-                    
                 }
                 else
                 {
-                    acierto = "no acierto";
                     Debug.Log("--  NO ACIERTO -- ");
+                    acierto = "no acierto";
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play();
                     ACIERTO = 2;
+					intentos_fallos++;
                 }
                 saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
                 Debug.Log("INTENTOS =>> " + intentos);
@@ -484,52 +539,64 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         }
         tiempo_boton_Derecha.text = "" + valorDerecha;
         tiempo_boton_Izquierda.text = "" + valorIzquierda;
-               
-            
     }
 
-    public void continuar() {
+    public void continuar()
+    {
         tiempo_boton_Derecha.text = "";
         tiempo_boton_Izquierda.text = "";
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
-        if (valorContinuar >= 20) {
+        if (valorContinuar >= 100)
+        {
             reinicioReloj();
             iniciarReloj();
             txtcontinuar.text = "";
             btnMsg.SetActive(false);
             btn_izquierda.SetActive(true);
             btn_derecha.SetActive(true);
-            if (pos_btn_A != null) {
+            if (pos_btn_A != null)
+            {
                 pos_btn_A.gameObject.SetActive(false);
             }
-            if (pos_btn_B != null) {
+            if (pos_btn_B != null)
+            {
                 pos_btn_B.gameObject.SetActive(false);
             }
 
-            if (ACIERTO == 0 && intentos > 0 && intentos_boton_seleccionado != 0) {
+            if (ACIERTO == 0 && intentos > 0 && intentos_boton_seleccionado != 0)
+            {
                 StartCoroutine(playsound());
             }
 
-            if (ACIERTO == 1 && intentos > 0 && intentos_boton_seleccionado == 4) {
+			if (ACIERTO == 1 && intentos > 0 && intentos_boton_seleccionado == 4 && intentos_fallos != 3)
+            {
                 StartCoroutine(playsound2());
                 estado_juego = 2;
                 intentos_boton_seleccionado = 0;
                 //intentos++;
             }
 
-          
-
-            if (ACIERTO == 2 && intentos > 0) {
+			if (ACIERTO == 2 && intentos > 0 && intentos_fallos != 3 )
+            {
                 StartCoroutine(playsound2());
                 estado_juego = 2;
+                intentos_boton_seleccionado = 0;
                 //intentos++;
             }
-
-
-
+			if (intentos_fallos >= 3)
+			{
+				Debug.Log("Se acabaron tus intentos");
+				btn_izquierda.SetActive(false);
+				btn_derecha.SetActive(false);
+				txtFinal.text = "Numero de intentos alcanzados, regrese ala seccion de aprendizaje.";
+				btnSalir.SetActive(true);
+				txtSalir.text = "Continuar";
+				valorContinuar = 0;
+			}
             Debug.Log("intenos = " + intentos + " acierto = " + ACIERTO + " INTENTO BOTON = " + intentos_boton_seleccionado);
-            if ( intentos == 1  && ACIERTO == 3 && intentos_boton_seleccionado == 4) {
+            if (intentos == 1 && ACIERTO == 3 && intentos_boton_seleccionado == 4)
+            {
                 Debug.Log("Se acabaron tus intentos");
                 btn_izquierda.SetActive(false);
                 btn_derecha.SetActive(false);
@@ -542,7 +609,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         }
     }
 
-    void reiniciar() {
+    void reiniciar()
+    {
         valorDerecha = 0;
         valorIzquierda = 0;
         //btn_izquierda.GetComponent<Renderer>().material.color = Color.gray;
@@ -553,25 +621,29 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         tiempo_boton_Izquierda.text = "A";
     }
 
-    public void botonSalir() {
+    public void botonSalir()
+    {
 
         valorContinuar++;
         txtSalir.text = "SALIR " + valorContinuar;
-        if (valorContinuar >= 100) {
+        if (valorContinuar >= 100)
+        {
             valorContinuar = 0;
             SceneManager.LoadScene(15);
         }
 
     }
 
-    public void InstanciarIzq() {
+    public void InstanciarIzq()
+    {
         btnPrincipal.GetComponent<Image>().sprite = Sprite.Create(texturaIzquierda, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
         GameObject btnIzq = Instantiate(btnPrincipal.gameObject, new Vector3(-0.1f, 0f, 0.1f), transform.rotation);
         btnIzq.transform.SetParent(this.transform);
         btnIzq.transform.localScale = new Vector3(1f, 1f, 0f);
         pos_btn_A = btnIzq.GetComponent<Transform>();
     }
-    public void InstanciarDer() {
+    public void InstanciarDer()
+    {
         btnPrincipal.GetComponent<Image>().sprite = Sprite.Create(texturaDerecha, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
         GameObject btnDer = Instantiate(btnPrincipal.gameObject, new Vector3(0.1f, 0f, 0.1f), transform.rotation);
         btnDer.transform.SetParent(this.transform);
@@ -579,38 +651,21 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         pos_btn_B = btnDer.GetComponent<Transform>();
     }
 
-
-
-    IEnumerator playsound() {
+    IEnumerator playsound()
+    {
         Debug.Log("reproducuiendo......");
         audioUbicacion.clip = donde_esta;
         audioUbicacion.Play();
         yield return new WaitForSeconds(audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_1;
         audioUbicacion.Play();
+        //INICIAR TIEMPO 1
+        //TimerStart ();
+
     }
 
-    IEnumerator playsoundOtravez()
+    IEnumerator playsound2()
     {
-        Debug.Log("reproducuiendo......");
-        audioUbicacion.clip = seleciona_otra_vez;
-        audioUbicacion.Play();
-        yield return new WaitForSeconds(audioUbicacion.clip.length);
-        audioUbicacion.clip = audio_personaje_1;
-        audioUbicacion.Play();
-    }
-
-    IEnumerator playsoundOtravez2()
-    {
-        Debug.Log("reproducuiendo......");
-        audioUbicacion.clip = seleciona_otra_vez;
-        audioUbicacion.Play();
-        yield return new WaitForSeconds(audioUbicacion.clip.length);
-        audioUbicacion.clip = audio_personaje_2;
-        audioUbicacion.Play();
-    }
-
-    IEnumerator playsound2() {
         Debug.Log("reproducuiendo......");
         audioUbicacion.clip = donde_esta;
         audioUbicacion.Play();
@@ -619,7 +674,18 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         audioUbicacion.Play();
     }
 
-    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto) {
+    IEnumerator playsoundOtravez(AudioClip audio_personaje)
+    {
+        Debug.Log("reproducuiendo......");
+        audioUbicacion.clip = seleciona_otra_vez;
+        audioUbicacion.Play();
+        yield return new WaitForSeconds(audioUbicacion.clip.length);
+        audioUbicacion.clip = audio_personaje;
+        audioUbicacion.Play();
+    }
+
+    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto)
+    {
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
         dbconn = (IDbConnection)new SqliteConnection(conn);
@@ -660,6 +726,5 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour {
         finalisacion = true;
         timerText.color = Color.yellow;
     }
-
 
 }
