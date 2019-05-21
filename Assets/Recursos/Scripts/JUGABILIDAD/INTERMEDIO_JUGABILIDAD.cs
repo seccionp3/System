@@ -10,8 +10,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 
-	//Salir
-	public Text txtSalir;
+    //Tiempos
+    private string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
+    public Text timerText;
+    private float startTime;
+    public GameObject HandRight;
+    public GameObject HandLeft;
+    private bool finalisacion = false;
+    private int contador = 0;
+
+    //Salir
+    public Text txtSalir;
 	public GameObject btnSalir;
 
 	private int estado_juego = 1; // 1 personaje 1 o 2 personaje 2
@@ -59,9 +68,21 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 	//Colores de los cuadrantes.
 	private rgb Color_cuadrante_1, Color_cuadrante_2;
 	private rgb Color_cuadrante_3, Color_cuadrante_4;
-	// Use this for initialization
-	void Start () {
-		btnSalir.SetActive (false);
+    private int number = 0;
+
+    //Instanciar Clases
+    public COORDENADAS coordenadas = new COORDENADAS();
+    private float secondsCounter = 1, secondstoCounter = 1;
+    private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log, seconds;
+    public string posicion_x = COORDENADAS.posicion_x;
+    public string posicion_y = COORDENADAS.posicion_y;
+    public string posicion_z = COORDENADAS.posicion_z;
+    private string hand;
+
+    // Use this for initialization
+    void Start () {
+        iniciarReloj();
+        btnSalir.SetActive (false);
 		txtContinuar.text = "";
 		btnContinuar.SetActive (false);
 		Debug.Log (codigo_detalle_aprendizaje_1);
@@ -77,8 +98,31 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        procesoReloj();
 
-	}
+        if (contador == 0)
+        {
+            if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
+            {
+                finalisarReloj();
+                tiempo_reaccion = timerText.text;
+                Debug.Log(tiempo_reaccion);
+                reinicioReloj();
+                iniciarReloj();
+                contador++;
+            }
+        }
+        tipoMano(hand);
+        Debug.Log(hand);
+        secondsCounter += Time.deltaTime;
+        if (secondsCounter >= secondstoCounter)
+        {
+            //Añasdir Campo Mano
+            coordenadas.savePosicion(nombre_usuario, posicion_x = COORDENADAS.posicion_x, posicion_y = COORDENADAS.posicion_y, posicion_z = COORDENADAS.posicion_z, codigo_detalle_aprendizaje_1);
+            secondsCounter = 0;
+            number++;
+        }
+    }
 
 	private void obtenerDatos1 (int id) {
 		byte[] son = new byte[0];
@@ -303,9 +347,18 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 		valorC = 0;
 		valorD = 0;
 		valorA++;
-		if (valorA >= 100) {
-			//desaparecen los 4 botones.
-			ocultarCubosABCD ();
+        if (valorA == 1)
+        {
+            finalisarReloj();
+            tiempo_cuadrado = timerText.text;
+            Debug.Log(tiempo_cuadrado);
+            reinicioReloj();
+        }
+        if (valorA >= 100) {
+            tiempo_boton = timerText.text;
+            Debug.Log(tiempo_boton);
+            //desaparecen los 4 botones.
+            ocultarCubosABCD ();
 			//indicar imagen, en el caso de existir
 			if (textura_pos_A == null) {
 				Debug.Log ("No ahy imagen");
@@ -313,7 +366,7 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 				InstanciaArribaIzquierda ();
 			}
 
-			if (estado_juego == 1) {
+            if (estado_juego == 1) {
 				if (id_personaje_1 == id_boton_1) {
 					Debug.Log (" ** ACIERTO **  ");
 					audioUbicacion.clip = correcto;
@@ -815,5 +868,61 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 		img.transform.localScale = new Vector3 (1f, 1f, 0f);
 		imagen_boton_D = img.GetComponent<Transform> ();
 	}
+
+    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto)
+    {
+        string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
+        IDbConnection dbconn;
+        dbconn = (IDbConnection)new SqliteConnection(conn);
+        dbconn.Open();
+        IDbCommand dbcmd = dbconn.CreateCommand();
+        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "' )";
+        dbcmd.CommandText = sqlQuery;
+        dbcmd.ExecuteReader();
+        Debug.Log("Datos Guardados Corectamente!..");
+        dbcmd.Dispose();
+        dbcmd = null;
+        dbconn.Close();
+        dbconn = null;
+    }
+
+    public void iniciarReloj()
+    {
+        startTime = Time.time;
+    }
+
+    public string procesoReloj()
+    {
+        float t = Time.time - startTime;
+        string minutes = ((int)t / 60).ToString();
+        string seconds = (t % 60).ToString("f2");
+
+        timerText.text = minutes + ":" + seconds;
+        return timerText.text;
+    }
+
+    public void reinicioReloj()
+    {
+        timerText.text = "00" + ":" + "00";
+    }
+
+    public void finalisarReloj()
+    {
+        finalisacion = true;
+        timerText.color = Color.yellow;
+    }
+
+    public string tipoMano(string hand)
+    {
+        if (HandRight.activeInHierarchy)
+        {
+            hand = ("mano derecha");
+        }
+        else
+        {
+            hand = ("mano izquierda");
+        }
+        return hand;
+    }
 
 }

@@ -66,6 +66,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
     public string posicion_x = COORDENADAS.posicion_x;
     public string posicion_y = COORDENADAS.posicion_y;
     public string posicion_z = COORDENADAS.posicion_z;
+    private string hand;
     // Use this for initialization
     void Start()
     {
@@ -94,7 +95,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
         procesoReloj();
         coordenadas.procesoBusqueda();
-
         if (contador == 0)
         {
             if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
@@ -107,6 +107,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 contador++;
             }
         }
+        tipoMano(hand);
+        Debug.Log(hand);
 		secondsCounter += Time.deltaTime;
 		if(secondsCounter >=  secondstoCounter){
             //Añasdir Campo Mano
@@ -748,6 +750,19 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
     {
         finalisacion = true;
         timerText.color = Color.yellow;
+    }
+
+    public string tipoMano(string hand)
+    {
+        if (HandRight.activeInHierarchy)
+        {
+            hand = ("mano derecha");
+        }
+        else
+        {
+            hand = ("mano izquierda");
+        }
+        return hand;
     }
 
 }
