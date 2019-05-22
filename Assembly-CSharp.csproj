@@ -328,6 +328,10 @@
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\LOGIN_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\JUGABILIDAD\SELEC_LEVEL_JUGABILIDAD.cs" />
     <Compile Include="Assets\Recursos\Scripts\Menu.cs" />
+    <Compile Include="Assets\Recursos\Scripts\REAPDRENDIZAJE\AVANZADO_REAPRENDIZAJE.cs" />
+    <Compile Include="Assets\Recursos\Scripts\REAPDRENDIZAJE\BASICOA_REAPRENDIZAJE.cs" />
+    <Compile Include="Assets\Recursos\Scripts\REAPDRENDIZAJE\BASICOB_REAPRENDIZAJE.cs" />
+    <Compile Include="Assets\Recursos\Scripts\REAPDRENDIZAJE\INTERMEDIO_REAPRENDIZAJE.cs" />
     <Compile Include="Assets\Recursos\Scripts\Selec_level.cs" />
     <None Include="Assets\LeapMotion\Core\Resources\LeapCG.cginc" />
     <None Include="Assets\LeapMotion\Core\README_BEFORE_UPDATING.txt" />

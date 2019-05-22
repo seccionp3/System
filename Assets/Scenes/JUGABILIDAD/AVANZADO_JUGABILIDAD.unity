@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5303,6 +5303,7 @@ MonoBehaviour:
   donde_esta: {fileID: 8300000, guid: 7ce97bb33ef621a44abe5c8e020c6f49, type: 3}
   correcto: {fileID: 8300000, guid: 55e5b3365cc089d4ab61f064c0f652bb, type: 3}
   intenta_otra_vez: {fileID: 8300000, guid: 8569011b5591a6840a4d436b83e44eb8, type: 3}
+  seleciona_otra_vez: {fileID: 8300000, guid: 8a0fc6923ea9f5d46b850ed7f2d140dd, type: 3}
   audio_personaje_1: {fileID: 0}
   audio_personaje_2: {fileID: 0}
   panelA: {fileID: 1056111138}

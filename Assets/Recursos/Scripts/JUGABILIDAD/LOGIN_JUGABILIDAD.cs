@@ -20,17 +20,20 @@ public class LOGIN_JUGABILIDAD : MonoBehaviour {
     public static string nombre_usuario_log;
 
     public static bool a = false, b = false, c = false, d = false;
-    public static List<int> codigosBasicoA = new List<int>();
-    public static List<int> codigosBasicoB = new List<int>();
-    public static List<int> codigosIntermedio = new List<int>();
-    public static List<int> codigosAvanzado = new List<int>();
+    public static List<int> codigosBasicoA;
+    public static List<int> codigosBasicoB;
+    public static List<int> codigosIntermedio;
+    public static List<int> codigosAvanzado;
 
     private bool siguiente = false;
 
     // Use this for initialization
     void Start () {
-        
-        fecha = System.DateTime.Now.ToString ("dd/MM/yyyy");
+        codigosBasicoA = new List<int>();
+        codigosBasicoB = new List<int>();
+        codigosIntermedio = new List<int>();
+        codigosAvanzado = new List<int>();
+    fecha = System.DateTime.Now.ToString ("dd/MM/yyyy");
         lblfecha.text = "Fecha = " + fecha;
     }
 

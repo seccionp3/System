@@ -20,7 +20,9 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
     public GameObject HandLeft;
     private bool finalisacion = false;
     private int contador = 0;
-
+    private int contadorBoton=0;
+    private bool activar = true;
+    private string id_boton = "";
 
     public int acierto_bd;
     public Text txtSalir;
@@ -30,7 +32,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 	private int intentos_fallos = 0;
     private int intentos = 3;
     private int estado_juego = 1; // 1 personaje 1 o 2 personaje 2
-    private String nombre_ubicacion, id_boton;
+    private String nombre_ubicacion;
     private int id_personaje_1, id_personaje_2, id_boton_derecha, id_boton_izquierda;
     private int ACIERTO = 0;
     private Transform pos_btn_A, pos_btn_B;
@@ -62,11 +64,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 	//Instanciar Clases
 	public COORDENADAS coordenadas = new COORDENADAS();
 	private float secondsCounter=1 , secondstoCounter=1;
-	private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log ,seconds;
-    public string posicion_x = COORDENADAS.posicion_x;
-    public string posicion_y = COORDENADAS.posicion_y;
-    public string posicion_z = COORDENADAS.posicion_z;
-    private string hand;
+	private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log,seconds;
+	private string posicion_x, posicion_y, posicion_z;
     // Use this for initialization
     void Start()
     {
@@ -74,11 +73,11 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 		coordenadas.iniciarBusqueda ();
         texturaIzquierda = new Texture2D(256, 256);
         texturaDerecha = new Texture2D(256, 256);
-        txtcontinuar.text = "";
+        txtcontinuar.text = "Iniciar";
         txtFinal.text = "";
         btnSalir.SetActive(false);
         txtSalir.text = "";
-        btnMsg.SetActive(false);
+        btnMsg.SetActive(true);
         Debug.Log(codigo_detalle_aprendizaje_1);
         Debug.Log(codigo_detalle_aprendizaje_2);
         imgA = panelA.GetComponent<Image>();
@@ -92,27 +91,12 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         procesoReloj();
-        coordenadas.procesoBusqueda();
-        if (contador == 0)
-        {
-            if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
-            {
-                finalisarReloj();
-                tiempo_reaccion = timerText.text;
-                Debug.Log(tiempo_reaccion);
-                reinicioReloj();
-                iniciarReloj();
-                contador++;
-            }
-        }
-        tipoMano(hand);
-        Debug.Log(hand);
+		coordenadas.procesoBusqueda ();        
 		secondsCounter += Time.deltaTime;
 		if(secondsCounter >=  secondstoCounter){
-            //Añasdir Campo Mano
-            coordenadas.savePosicion(nombre_usuario, posicion_x=COORDENADAS.posicion_x , posicion_y = COORDENADAS.posicion_y , posicion_z = COORDENADAS.posicion_z, codigo_detalle_aprendizaje_1);
+			//Añasdir Campo Mano
+			coordenadas.savePosicion(nombre_usuario, posicion_x, posicion_y, posicion_z,codigo_detalle_aprendizaje_1);
 			secondsCounter = 0;
 			number++;
 		}
@@ -323,7 +307,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 if (id_personaje_1 == id_boton_derecha)
                 {
                     Debug.Log(" ** ACIERTO **  ");
-                    id_boton = "";
                     acierto = "acierto";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
@@ -333,37 +316,40 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
                     if (intentos_boton_seleccionado == 1)
                     {
-                        id_boton = "Boton Grande";
+                        
                         btn_derecha.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
-                        id_boton = "Boton Mediano";
+                        
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
-
+                        id_boton = "Boton Grande";
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
-                        id_boton = "Boton Pequeño";
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
+                        id_boton = "Boton Mediano";
+                        contadorBoton++;
+                        Debug.Log(contadorBoton);
                         intentos--;
+                    }else if(contadorBoton == 1){
+                        id_boton = "Boton Pequeno";
                     }
                 }
                 else
                 {
                     Debug.Log("--  NO ACIERTO -- ");
-                    id_boton = "";
                     acierto = "no acierto";
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play();
 					intentos_fallos++;
                     ACIERTO = 0;
                 }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, id_boton, acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto,id_boton);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
 
@@ -374,7 +360,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 {
                     Debug.Log(" ** ACIERTO **  ");
                     acierto = "acierto";
-                    id_boton = "";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
                     ACIERTO = 3;
@@ -383,37 +368,42 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
                     if (intentos_boton_seleccionado == 1)
                     {
-                        id_boton = "Boton Grande";
+                        
                         btn_derecha.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
-                        id_boton = "Boton Mediano";
+                        
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        id_boton = "Boton Grande";
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
-                        id_boton = "Boton Pequeño";
+                        
                         btn_derecha.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        id_boton = "Mediano";
+                        contadorBoton++;
                         intentos--;
+                    }else if(contadorBoton == 1){
+                        id_boton = "Boton Pequeno";
                     }
                 }
                 else
                 {
                     Debug.Log("--  NO ACIERTO -- ");
                     acierto = "no acierto";
-                    id_boton = "";
                     audioUbicacion.clip = intenta_otra;
                     ACIERTO = 2;
 					intentos_fallos++;
                     audioUbicacion.Play();
                 }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, id_boton, acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto,id_boton);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
 
@@ -460,7 +450,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 {
                     Debug.Log(" ** ACIERTO **  ");
                     acierto = "acierto";
-                    id_boton = "";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
                     ACIERTO = 1;
@@ -469,37 +458,43 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
                     if (intentos_boton_seleccionado == 1)
                     {
-                        id_boton = "Boton Grande";
+                        
                         btn_izquierda.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
+                        
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
-                        id_boton = "Boton Mediano";
+                        
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
+                        id_boton = "Boton Grande";
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
-                        id_boton = "Boton Pequeño";
+                        
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_1));
+                        id_boton = "Boton Mediano";
+                        contadorBoton++;
                         intentos--;
+                    }else if (contadorBoton == 1)
+                    {
+                        id_boton = "Boton Pequeno";
                     }
                 }
                 else
                 {
                     Debug.Log("--  NO ACIERTO -- ");
                     acierto = "no acierto";
-                    id_boton = "";
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play();
                     ACIERTO = 0;
 					intentos_fallos++;
                 }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton,id_boton ,acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto,id_boton);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
             else
@@ -514,7 +509,6 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 {
                     Debug.Log(" ** ACIERTO **  ");
                     acierto = "acierto";
-                    id_boton = "";
                     audioUbicacion.clip = correcto;
                     audioUbicacion.Play();
                     ACIERTO = 3;
@@ -523,37 +517,43 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
                     if (intentos_boton_seleccionado == 1)
                     {
-                        id_boton = "Boton Grande";
+                        
                         btn_izquierda.transform.localScale += new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        
                     }
 
                     if (intentos_boton_seleccionado == 2)
                     {
-                        id_boton = "Boton Mediano";
+                        
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        id_boton = "Boton Grande";
 
                     }
                     if (intentos_boton_seleccionado == 3)
                     {
-                        id_boton = "Boton Pequeño";
+                        
                         btn_izquierda.transform.localScale -= new Vector3(0.05F, 0.05F, 0.0F);
                         StartCoroutine(playsoundOtravez(audio_personaje_2));
+                        id_boton = "Boton Mediano";
+                        contadorBoton++;
                         intentos--;
+                    }else if (contadorBoton == 1)
+                    {
+                        id_boton = "Boton Pequeno";
                     }
                 }
                 else
                 {
                     Debug.Log("--  NO ACIERTO -- ");
                     acierto = "no acierto";
-                    id_boton = "";
                     audioUbicacion.clip = intenta_otra;
                     audioUbicacion.Play();
                     ACIERTO = 2;
 					intentos_fallos++;
                 }
-                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, id_boton,acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto,id_boton);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
             else
@@ -572,10 +572,12 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
         tiempo_boton_Izquierda.text = "";
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
-        if (valorContinuar >= 100)
+        if (valorContinuar >= 50)
         {
             reinicioReloj();
             iniciarReloj();
+            activacionMano();
+            
             txtcontinuar.text = "";
             btnMsg.SetActive(false);
             btn_izquierda.SetActive(true);
@@ -599,6 +601,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 StartCoroutine(playsound2());
                 estado_juego = 2;
                 intentos_boton_seleccionado = 0;
+                
                 //intentos++;
             }
 
@@ -607,11 +610,14 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 StartCoroutine(playsound2());
                 estado_juego = 2;
                 intentos_boton_seleccionado = 0;
+             
                 //intentos++;
             }
 			if (intentos_fallos >= 3)
 			{
-				Debug.Log("Se acabaron tus intentos");
+                BASICOA_REAPRENDIZAJE.codigoA = codigo_detalle_aprendizaje_1;
+                BASICOA_REAPRENDIZAJE.codigoB = codigo_detalle_aprendizaje_2;
+                Debug.Log("Se acabaron tus intentos");
 				btn_izquierda.SetActive(false);
 				btn_derecha.SetActive(false);
 				txtFinal.text = "Numero de intentos alcanzados, regrese ala seccion de aprendizaje.";
@@ -625,7 +631,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
                 Debug.Log("Se acabaron tus intentos");
                 btn_izquierda.SetActive(false);
                 btn_derecha.SetActive(false);
-                txtFinal.text = "Fase terminada... presiona en continuar";
+                txtFinal.text = "Fase terminada... presiona en salir";
                 btnSalir.SetActive(true);
                 txtSalir.text = "Salir ";
                 valorContinuar = 0;
@@ -651,10 +657,18 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
 
         valorContinuar++;
         txtSalir.text = "SALIR " + valorContinuar;
-        if (valorContinuar >= 100)
+        if (valorContinuar >= 50)
         {
+            if (intentos_fallos >= 3)
+            {
+                SceneManager.LoadScene(21);
+            }
+            else
+            {
+                SceneManager.LoadScene(15);
+            }
             valorContinuar = 0;
-            SceneManager.LoadScene(15);
+          
         }
 
     }
@@ -686,7 +700,8 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
         audioUbicacion.Play();
         //INICIAR TIEMPO 1
         //TimerStart ();
-
+        reinicioReloj();
+		iniciarReloj();
     }
 
     IEnumerator playsound2()
@@ -697,6 +712,7 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
         yield return new WaitForSeconds(audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_2;
         audioUbicacion.Play();
+        btnMsg.SetActive(true);
     }
 
     IEnumerator playsoundOtravez(AudioClip audio_personaje)
@@ -709,14 +725,14 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
         audioUbicacion.Play();
     }
 
-    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string id_boton, string acierto)
+    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto, string id_boton)
     {
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
         dbconn = (IDbConnection)new SqliteConnection(conn);
         dbconn.Open();
         IDbCommand dbcmd = dbconn.CreateCommand();
-        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_boton ,id_detalle_aprendizaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "', '" + id_boton + "' , '" + id_detalle_aprendizaje + "' )";
+        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje, id_boton) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "', '" + id_boton + "')";
         dbcmd.CommandText = sqlQuery;
         dbcmd.ExecuteReader();
         Debug.Log("Datos Guardados Corectamente!..");
@@ -752,17 +768,20 @@ public class BASICOA_JUGABILIDAD : MonoBehaviour
         timerText.color = Color.yellow;
     }
 
-    public string tipoMano(string hand)
-    {
-        if (HandRight.activeInHierarchy)
+    public void activacionMano() {
+        if (contador == 0)
         {
-            hand = ("mano derecha");
+
+            if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
+            {
+                finalisarReloj();
+                tiempo_reaccion = timerText.text;
+                Debug.Log(tiempo_reaccion);
+                reinicioReloj();
+                iniciarReloj();
+                contador++;
+            }
         }
-        else
-        {
-            hand = ("mano izquierda");
-        }
-        return hand;
     }
 
 }

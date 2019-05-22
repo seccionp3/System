@@ -65,4 +65,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JUGABILIDAD/AVANZADO_JUGABILIDAD.unity
     guid: 64c20585344053a43b7aa3d20b736a80
+  - enabled: 1
+    path: Assets/Scenes/REAPRENDIZAJE/AVANZADO_REAPRENDIZAJE.unity
+    guid: 2da241e03c8095b40a1004d40cf1af0f
+  - enabled: 1
+    path: Assets/Scenes/REAPRENDIZAJE/BASICOA_REAPRENDIZAJE.unity
+    guid: 29fec9fec48fdd944976655f7969e3cd
+  - enabled: 1
+    path: Assets/Scenes/REAPRENDIZAJE/BASICOB_REAPRENDIZAJE.unity
+    guid: 5baa4f2ccf5925a4397ed88598a280b9
+  - enabled: 1
+    path: Assets/Scenes/REAPRENDIZAJE/INTERMEDIO_REAPRENDIZAJE.unity
+    guid: 875d84792893b6d49bbaf89a42f5c8a5
   m_configObjects: {}

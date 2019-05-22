@@ -53,16 +53,6 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
     rgb colorInf = new rgb ();
     private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoB.ElementAt(0);
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoB.ElementAt(1);
-    private int number = 0;
-
-    //Instanciar Clases
-    public COORDENADAS coordenadas = new COORDENADAS();
-    private float secondsCounter = 1, secondstoCounter = 1;
-    private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log, seconds;
-    public string posicion_x = COORDENADAS.posicion_x;
-    public string posicion_y = COORDENADAS.posicion_y;
-    public string posicion_z = COORDENADAS.posicion_z;
-    private string hand;
 
     // Use this for initialization
     void Start () {
@@ -97,16 +87,6 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 				contador++;
 			}
 		}
-        tipoMano(hand);
-        Debug.Log(hand);
-        secondsCounter += Time.deltaTime;
-        if (secondsCounter >= secondstoCounter)
-        {
-            //Añasdir Campo Mano
-            coordenadas.savePosicion(nombre_usuario, posicion_x = COORDENADAS.posicion_x, posicion_y = COORDENADAS.posicion_y, posicion_z = COORDENADAS.posicion_z, codigo_detalle_aprendizaje_1);
-            secondsCounter = 0;
-            number++;
-        }
     }
 
     public void siguienteElemento () {
@@ -489,7 +469,9 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 
 			if (intentos_fallos >= 3) {
 				Debug.Log ("Se acabaron tus intentos");
-				btn_Superior.SetActive (false);
+                BASICOA_REAPRENDIZAJE.codigoA = codigo_detalle_aprendizaje_1;
+                BASICOA_REAPRENDIZAJE.codigoB = codigo_detalle_aprendizaje_2;
+                btn_Superior.SetActive (false);
 				btn_Inferior.SetActive (false);
 				txtFinal.text = "Intententos Agotados, regrese a la seccion de aprendizaje";
 				btnSalir.SetActive (true);
@@ -528,8 +510,15 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         valorContinuar++;
         txtSalir.text = "SALIR " + valorContinuar;
         if(valorContinuar >= 100){
+            if (intentos_fallos >= 3)
+            {
+                SceneManager.LoadScene(22);
+            }
+            else
+            {
+                SceneManager.LoadScene(15);
+            }
              valorContinuar = 0;
-             SceneManager.LoadScene (15);
         }
     
 
@@ -621,16 +610,4 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 		timerText.color = Color.yellow;
 	}
 
-    public string tipoMano(string hand)
-    {
-        if (HandRight.activeInHierarchy)
-        {
-            hand = ("mano derecha");
-        }
-        else
-        {
-            hand = ("mano izquierda");
-        }
-        return hand;
-    }
 }
