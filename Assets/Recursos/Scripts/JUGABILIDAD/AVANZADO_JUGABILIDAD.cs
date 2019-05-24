@@ -75,8 +75,8 @@ public class AVANZADO_JUGABILIDAD : MonoBehaviour {
 	void Start () {
 		intentos_fallo = 0;
 		btnSalir.SetActive (false);
-		txtContinuar.text = "";
-		btnContinuar.SetActive (false);
+		txtContinuar.text = "Iniciar";
+		btnContinuar.SetActive (true);
 		Debug.Log (codigo_detalle_aprendizaje_1);
 		Debug.Log (codigo_detalle_aprendizaje_2);
 		imgA = panelA.GetComponent<Image> ();
@@ -370,6 +370,15 @@ public class AVANZADO_JUGABILIDAD : MonoBehaviour {
 		yield return new WaitForSeconds (audioUbicacion.clip.length);
 		audioUbicacion.clip = sonido;
 		audioUbicacion.Play ();
+		if(estado_juego == 2){
+			valorContinuar = 0;
+			txtContinuar.text = "Iniciar";
+			btnContinuar.SetActive (true);
+		}
+
+
+		//txtContinuar.text = "Iniciar";
+		//btnContinuar.SetActive (true);
 	}
 
 	IEnumerator playsoundOtravez (AudioClip audio_personaje) {
@@ -1416,15 +1425,15 @@ public class AVANZADO_JUGABILIDAD : MonoBehaviour {
 			}
 			if (ACIERTOS == 1 && intentos_fallo != 3 && intentos_boton_seleccionado == 4 ) {
 				mostrarCuboTextoABCD ();
-				StartCoroutine (playsound (audio_personaje_2));
 				estado_juego = 2;
 				intentos_boton_seleccionado = 0;
+				StartCoroutine (playsound (audio_personaje_2));
 			}
 			if (ACIERTOS == 2 && intentos_fallo != 3 && intentos_boton_seleccionado == 4) {
 				mostrarCuboTextoABCD ();
-				StartCoroutine (playsound (audio_personaje_2));
 				estado_juego = 2;
 				intentos_boton_seleccionado = 0;
+				StartCoroutine (playsound (audio_personaje_2));
 			}
 			if (ACIERTOS == 3 && intentos_fallo != 3 && intentos_boton_seleccionado == 4) {
 				ocultarCubosABCD();

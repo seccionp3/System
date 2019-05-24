@@ -71,8 +71,8 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		btnSalir.SetActive (false);
-		txtContinuar.text = "";
-		btnContinuar.SetActive (false);
+		txtContinuar.text = "Iniciar";
+		btnContinuar.SetActive (true);
 		Debug.Log (codigo_detalle_aprendizaje_1);
 		Debug.Log (codigo_detalle_aprendizaje_2);
 		imgA = panelA.GetComponent<Image> ();
@@ -742,14 +742,14 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 			}
 			if (ACIERTOS == 1 && intentos > 0 && intentos_boton_seleccionado == 4 && intentos_fallos != 3) {
 				mostrarCuboTextoABCD ();
-				StartCoroutine (playsound (audio_personaje_2));
 				estado_juego = 2;
 				intentos_boton_seleccionado = 0;
+				StartCoroutine (playsound (audio_personaje_2));
 			}
 			if (ACIERTOS == 2 && intentos_fallos != 3) {
 				mostrarCuboTextoABCD ();
-				StartCoroutine (playsound (audio_personaje_2));
 				estado_juego = 2;
+				StartCoroutine (playsound (audio_personaje_2));
 			}
 			mostrarCuboTextoABCD ();
 			if (intentos_fallos >= 3) {
@@ -803,6 +803,12 @@ public class INTERMEDIO_JUGABILIDAD : MonoBehaviour {
 		yield return new WaitForSeconds(audioUbicacion.clip.length);
 		audioUbicacion.clip = audio_personaje;
 		audioUbicacion.Play();
+		if (estado_juego == 2)
+		{
+			valorContinuar = 0;
+			txtContinuar.text = "Iniciar";
+			btnContinuar.SetActive (true);
+		}
 	}
 
 	public void InstanciaArribaIzquierda () {

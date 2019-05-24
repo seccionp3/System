@@ -13,7 +13,7 @@ public class COORDENADAS : MonoBehaviour
 	private float secondsCounter=1 , secondstoCounter=1;
 	private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log,seconds;
     private int nombre_nivel = LOGIN_JUGABILIDAD.codigosBasicoA.ElementAt(0), number=0;
-    private string posicion_x, posicion_y, posicion_z;
+    public static string posicion_x, posicion_y, posicion_z;
 
     // Start is called before the first frame update
     void Start()
@@ -24,14 +24,6 @@ public class COORDENADAS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        procesoBusqueda();
-			secondsCounter += Time.deltaTime;
-			if(secondsCounter >=  secondstoCounter){
-				//Añasdir Campo Mano
-				//savePosicion(nombre_usuario, posicion_x, posicion_y, posicion_z,nombre_nivel);
-				secondsCounter = 0;
-				number++;
-			}
     }
 
     public void iniciarBusqueda() {
@@ -50,14 +42,14 @@ public class COORDENADAS : MonoBehaviour
 		return position;
     }
 
-    public void savePosicion(string nombre_usuario, string posicion_x, string posicion_y, string posicion_z, int nombre_nivel)
+    public void savePosicion(string nombre_usuario, string posicion_x, string posicion_y, string posicion_z, int nombre_nivel, string mano, int intento, string fecha)
     {
         string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
         IDbConnection dbconn;
         dbconn = (IDbConnection)new SqliteConnection(conn);
         dbconn.Open();
         IDbCommand dbcmd = dbconn.CreateCommand();
-        string sqlQuery = "INSERT INTO posicion (posicion_x,posicion_y, posicion_z,nombre_nivel, nombre_usuario) Values ('" + posicion_x  + "','" + posicion_y + "','" + posicion_z + "' , '" + nombre_nivel + "' , '" + nombre_usuario + "' )";
+        string sqlQuery = "INSERT INTO posicion (posicion_x,posicion_y, posicion_z,nombre_nivel, nombre_usuario, mano, intento, fecha) Values ('" + posicion_x  + "','" + posicion_y + "','" + posicion_z + "' , '" + nombre_nivel + "' , '" + nombre_usuario + "' , '" + mano + "', '" + intento + "', '" + fecha + "')";
         dbcmd.CommandText = sqlQuery;
         dbcmd.ExecuteReader();
         Debug.Log("Datos Guardados Corectamente!..");

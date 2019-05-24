@@ -1,16 +1,18 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recursos\Scripts\JUGABILIDAD\BASICOA_JUGABILIDAD.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recursos\Scripts\JUGABILIDAD\BASICOB_JUGABILIDAD.cs">
     <Files>
-      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\BASICOA_JUGABILIDAD.cs" Line="554" Column="13" />
-      <File FileName="Assets\Recursos\Scripts\APRENDIZAJE.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recursos\Scripts\REAPDRENDIZAJE\AVANZADO_REAPRENDIZAJE.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\INTERMEDIO_JUGABILIDAD.cs" Line="837" Column="2" />
-      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\COORDENADAS.cs" Line="44" Column="16" />
+      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\BASICOA_JUGABILIDAD.cs" Line="537" Column="25" />
+      <File FileName="Assets\Recursos\Scripts\INTERMEDIO.cs" Line="1" Column="1" />
+      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\BASICOB_JUGABILIDAD.cs" Line="201" Column="36" NotebookId="1" />
+      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\INTERMEDIO_JUGABILIDAD.cs" Line="1" Column="1" NotebookId="1" />
+      <File FileName="Assets\Recursos\Scripts\JUGABILIDAD\AVANZADO_JUGABILIDAD.cs" Line="1" Column="1" NotebookId="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\njach\Documents\Desarrollo\Ricardo Munioz\System-master5\Assets\Recursos\Scripts\JUGABILIDAD\AVANZADO_JUGABILIDAD.cs" line="379" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

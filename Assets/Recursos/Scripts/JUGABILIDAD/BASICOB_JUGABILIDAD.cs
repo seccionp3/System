@@ -18,6 +18,8 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 	public GameObject HandLeft;
 	private bool finalisacion = false;
 	private int contador = 0;
+	private string id_boton="";
+	private int contadorBoton;
 
 	public Text txtSalir;
     public GameObject btnSalir;
@@ -59,10 +61,10 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 		iniciarReloj ();
         texturaInferior = new Texture2D (256, 256);
         texturaSuperior = new Texture2D (256, 256);
-        txtcontinuar.text = "";
+        txtcontinuar.text = "Iniciar";
         txtFinal.text = "";
         btnSalir.SetActive(false);
-        btnMsg.SetActive (false);
+		btnMsg.SetActive (true);
         Debug.Log (codigo_detalle_aprendizaje_1);
         Debug.Log (codigo_detalle_aprendizaje_2);
         imgA = panelA.GetComponent<Image> ();
@@ -75,18 +77,6 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
     void Update () {
 		procesoReloj();
 
-		if (contador == 0)
-		{
-			if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
-			{
-				finalisarReloj();
-				tiempo_reaccion = timerText.text;
-				Debug.Log(tiempo_reaccion);
-				reinicioReloj();
-				iniciarReloj();
-				contador++;
-			}
-		}
     }
 
     public void siguienteElemento () {
@@ -218,7 +208,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 			Debug.Log(tiempo_cuadrado);
 			reinicioReloj();
 		}
-        if (valorSuperior >= 100) {
+        if (valorSuperior >= 50) {
 			tiempo_boton = timerText.text;
 			Debug.Log(tiempo_boton);
             tocar_boton_superior = false;
@@ -245,20 +235,26 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 						Debug.Log (" **  intentos para boto **  " + intentos_boton_seleccionado);
 
 						if (intentos_boton_seleccionado == 1) {
+							id_boton = "Boton Normal";
 							btn_Superior.transform.localScale += new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 						}
-
+						
 						if (intentos_boton_seleccionado == 2) {
+							id_boton = "Boton Grande";
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 
 						}
 						if (intentos_boton_seleccionado == 3) {
+							id_boton = "Boton Mediano";
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 							intentos--;
-						}
+					}else if(contadorBoton==1){
+						id_boton = "Boton Pequeño";
+						contadorBoton = 0;
+					}
 						
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
@@ -284,20 +280,26 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 						Debug.Log (" **  intentos para boto **  " + intentos_boton_seleccionado);
 
 						if (intentos_boton_seleccionado == 1) {
+							id_boton = "Boton Normal";
 							btn_Superior.transform.localScale += new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 						}
 
 						if (intentos_boton_seleccionado == 2) {
+							id_boton = "Boton Grande";
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 
 						}
 						if (intentos_boton_seleccionado == 3) {
+							id_boton = "Boton Mediano";
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 							intentos--;
-						}
+					}else if(contadorBoton==2){
+						id_boton = "Boton Pequeño";
+					}
+
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
 					acierto = "no acierto";
@@ -330,7 +332,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 			Debug.Log(tiempo_cuadrado);
 			reinicioReloj();
 		}
-        if (valorInferior >= 100) {
+        if (valorInferior >= 50) {
 			tiempo_boton = timerText.text;
 			Debug.Log(tiempo_boton);
             InstanciaInferior ();
@@ -355,20 +357,25 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 						Debug.Log (" **  intentos para boto **  " + intentos_boton_seleccionado);
 
 						if (intentos_boton_seleccionado == 1) {
+							id_boton = "Boton Normal";
 							btn_Inferior.transform.localScale += new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 						}
 
 						if (intentos_boton_seleccionado == 2) {
+							id_boton = "Boton Grande";
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 
 						}
 						if (intentos_boton_seleccionado == 3) {
+							id_boton = "Boton Mediano";
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 							intentos--;
-						}
+					}else if(contadorBoton==1){
+						id_boton = "Boton Pequeño";
+					}
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
 					acierto = "no acierto";
@@ -396,20 +403,25 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 						Debug.Log (" **  intentos para boto **  " + intentos_boton_seleccionado);
 
 						if (intentos_boton_seleccionado == 1) {
+							id_boton = "Boton Normal";
 							btn_Inferior.transform.localScale += new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 						}
-
+						
 						if (intentos_boton_seleccionado == 2) {
+							id_boton = "Boton Grande";
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 
 						}
 						if (intentos_boton_seleccionado == 3) {
+							id_boton = "Boton Mediano";
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 							intentos--;
-						}
+					}else if(contadorBoton==1){
+						id_boton = "Boton Pequeño";
+					}
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
 					acierto = "no acierto";
@@ -435,7 +447,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         tiempo_boton_Inferior.text = "";
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
-        if (valorContinuar >= 100) {
+        if (valorContinuar >= 50) {
 			reinicioReloj();
 			iniciarReloj();
             txtcontinuar.text = "";
@@ -509,7 +521,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         
         valorContinuar++;
         txtSalir.text = "SALIR " + valorContinuar;
-        if(valorContinuar >= 100){
+        if(valorContinuar >= 50){
             if (intentos_fallos >= 3)
             {
                 SceneManager.LoadScene(22);
@@ -546,7 +558,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         audioUbicacion.clip = audio_personaje_1;
         audioUbicacion.Play ();
         //INICIAR TIEMPO 1
-
+		iniciarReloj();
 		}		IEnumerator playsoundOtravez ( AudioClip audio_personaje) {
 				Debug.Log ("reproducuiendo......");
 				audioUbicacion.clip = seleciona_otra_vez;
@@ -565,6 +577,11 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         yield return new WaitForSeconds (audioUbicacion.clip.length);
         audioUbicacion.clip = audio_personaje_2;
         audioUbicacion.Play ();
+		valorContinuar = 0;
+		txtcontinuar.text = "Iniciar";
+
+		btnMsg.SetActive (true);
+		iniciarReloj ();
     }
 
 	public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto)
@@ -609,5 +626,18 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 		finalisacion = true;
 		timerText.color = Color.yellow;
 	}
-
+	public void reaccionMano(){
+		if (contador == 0)
+		{
+			if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
+			{
+				finalisarReloj();
+				tiempo_reaccion = timerText.text;
+				Debug.Log(tiempo_reaccion);
+				reinicioReloj();
+				iniciarReloj();
+				contador++;
+			}
+		}
+	}
 }

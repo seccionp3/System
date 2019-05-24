@@ -42,7 +42,7 @@ public class INTERMEDIO : MonoBehaviour {
     public void InstanciarIzqSuperior () {
 
         //POSICIONES INICIALES
-        btnPrincipal.GetComponentInChildren<Text> ().text = "Izquierda Superior";
+        btnPrincipal.GetComponentInChildren<Text> ().text = "Izquierda Arriba";
         //btnPrincipal.onClick.AddListener(contar);
         //GameObject btnIzqSup = Instantiate(btnPrincipal.gameObject,new Vector3(-100 ,(Screen.height/2) + 25  ,0),transform.rotation);
         GameObject btnIzqSup = Instantiate (btnPrincipal.gameObject, new Vector3 (xi, (Screen.height / 2) + yi, 0), transform.rotation);
@@ -60,7 +60,7 @@ public class INTERMEDIO : MonoBehaviour {
     public void InstanciarIzqInferior () {
 
         //POSICIONES INICIALES
-        btnPrincipal.GetComponentInChildren<Text> ().text = "Izquierda Inferior";
+        btnPrincipal.GetComponentInChildren<Text> ().text = "Izquierda Abajo";
         //btnPrincipal.onClick.AddListener(contar);
         //GameObject btnIzqInf = Instantiate(btnPrincipal.gameObject,new Vector3( -100, (Screen.height/2) - 25 ,0),transform.rotation);
         GameObject btnIzqInf = Instantiate (btnPrincipal.gameObject, new Vector3 (xi, (Screen.height / 2) + yi, 0), transform.rotation);
@@ -77,7 +77,7 @@ public class INTERMEDIO : MonoBehaviour {
 
     public void InstanciarDerInferior () {
 
-        btnPrincipal.GetComponentInChildren<Text> ().text = "Derecha Inferior";
+        btnPrincipal.GetComponentInChildren<Text> ().text = "Derecha Abajo";
         //GameObject btnDerInf = Instantiate(btnPrincipal.gameObject,new Vector3( Screen.width + 100 , (Screen.height/2) - 25  ,0),transform.rotation);
         GameObject btnDerInf = Instantiate (btnPrincipal.gameObject, new Vector3 (Screen.width + xi, (Screen.height / 2) + yi, 0), transform.rotation);
         btnDerInf.transform.SetParent (this.transform);
@@ -90,7 +90,7 @@ public class INTERMEDIO : MonoBehaviour {
     }
     public void InstanciarDerSuperior () {
 
-        btnPrincipal.GetComponentInChildren<Text> ().text = "Derecha Superior";
+        btnPrincipal.GetComponentInChildren<Text> ().text = "Derecha Arriba";
         // GameObject btnDerSup = Instantiate(btnPrincipal.gameObject,new Vector3( Screen.width + 100 , (Screen.height/2) + 25  ,0),transform.rotation);
         GameObject btnDerSup = Instantiate (btnPrincipal.gameObject, new Vector3 (Screen.width + xi, (Screen.height / 2) + yi, 0), transform.rotation);
         btnDerSup.transform.SetParent (this.transform);
