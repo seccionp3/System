@@ -10,18 +10,19 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class BASICOB_JUGABILIDAD : MonoBehaviour {
 
-	//Tiempos
-	private string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
-	public Text timerText;
-	private float startTime;
-	public GameObject HandRight;
-	public GameObject HandLeft;
-	private bool finalisacion = false;
-	private int contador = 0;
-	private string id_boton="";
-	private int contadorBoton;
+    //Tiempos
+    private string tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto;
+    public Text timerText;
+    private float startTime;
+    public GameObject HandRight;
+    public GameObject HandLeft;
+    private bool finalisacion = false;
+    private int contador = 0;
+    private string id_boton = "";
+    private int contadorBoton;
+    private string fecha = LOGIN_JUGABILIDAD.fecha;
 
-	public Text txtSalir;
+    public Text txtSalir;
     public GameObject btnSalir;
     public Text txtFinal;
     private int intentos = 3;
@@ -55,6 +56,13 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
     rgb colorInf = new rgb ();
     private int codigo_detalle_aprendizaje_1 = LOGIN_JUGABILIDAD.codigosBasicoB.ElementAt(0);
     private int codigo_detalle_aprendizaje_2 = LOGIN_JUGABILIDAD.codigosBasicoB.ElementAt(1);
+    private int number = 0;
+
+    //Instanciar Clases
+    public COORDENADAS coordenadas = new COORDENADAS();
+    private float secondsCounter = 1, secondstoCounter = 1;
+    private string nombre_usuario = LOGIN_JUGABILIDAD.nombre_usuario_log, seconds;
+    private string posicion_x, posicion_y, posicion_z, mano;
 
     // Use this for initialization
     void Start () {
@@ -76,7 +84,18 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 		procesoReloj();
+        coordenadas.procesoBusqueda();
+        //posicion_x = posicion_x.ToString ();
 
+        tipoMano(HandRight, HandLeft);
+        secondsCounter += Time.deltaTime;
+        if (secondsCounter >= secondstoCounter)
+        {
+            //Añasdir Campo Mano
+            coordenadas.savePosicion(nombre_usuario, posicion_x = COORDENADAS.posicion_x, posicion_y = COORDENADAS.posicion_y, posicion_z = COORDENADAS.posicion_z, codigo_detalle_aprendizaje_1, mano, intentos, fecha);
+            secondsCounter = 0;
+            number++;
+        }
     }
 
     public void siguienteElemento () {
@@ -209,8 +228,8 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 			reinicioReloj();
 		}
         if (valorSuperior >= 50) {
-			tiempo_boton = timerText.text;
-			Debug.Log(tiempo_boton);
+            tiempo_boton = timerText.text;
+            Debug.Log(tiempo_boton);
             tocar_boton_superior = false;
             //Indicar Imagen
             InstanciaSuperior();
@@ -251,7 +270,9 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 							intentos--;
-					}else if(contadorBoton==1){
+                            contadorBoton++;
+                    }
+                    else if(contadorBoton==1){
 						id_boton = "Boton Pequeño";
 						contadorBoton = 0;
 					}
@@ -264,7 +285,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
                     ACIERTO = 0;
 					intentos_fallos++;
                 }
-				saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+				saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto, id_boton, fecha);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
 
@@ -296,8 +317,11 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 							btn_Superior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 							intentos--;
-					}else if(contadorBoton==2){
+                            contadorBoton++;
+                    }
+                    else if(contadorBoton==2){
 						id_boton = "Boton Pequeño";
+                        contadorBoton = 0;
 					}
 
                 } else {
@@ -308,7 +332,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
                     audioUbicacion.Play ();
 					intentos_fallos++;
                 }
-				saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto, id_boton, fecha);
                 Debug.Log("INTENTOS =>> " + intentos);
             }
 
@@ -373,9 +397,12 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_1));
 							intentos--;
-					}else if(contadorBoton==1){
+                            contadorBoton++;
+                    }
+                    else if(contadorBoton==1){
 						id_boton = "Boton Pequeño";
-					}
+                        contadorBoton=0;
+                    }
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
 					acierto = "no acierto";
@@ -384,7 +411,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
                     ACIERTO = 0;
 					intentos_fallos++;
                 }
-				saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto, id_boton, fecha);
                 Debug.Log("INTENTOS =>> " + intentos);
             }else
             {
@@ -419,9 +446,12 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 							btn_Inferior.transform.localScale -= new Vector3 (0.05F, 0.05F, 0.0F);
 							StartCoroutine (playsoundOtravez (audio_personaje_2));
 							intentos--;
-					}else if(contadorBoton==1){
+                            contadorBoton++;
+                    }
+                    else if(contadorBoton==1){
 						id_boton = "Boton Pequeño";
-					}
+                        contadorBoton=0;
+                    }
                 } else {
                     Debug.Log ("--  NO ACIERTO -- ");
 					acierto = "no acierto";
@@ -430,7 +460,7 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
                     ACIERTO = 2;
 					intentos_fallos++;
                 }
-				saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto);
+                saveAcierto(codigo_detalle_aprendizaje_1, tiempo_reaccion, tiempo_cuadrado, tiempo_boton, acierto, id_boton, fecha);
                 Debug.Log("INTENTOS =>> " + intentos);
             }else
             {
@@ -448,7 +478,14 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         valorContinuar++;
         txtcontinuar.text = "CONTINUAR " + valorContinuar;
         if (valorContinuar >= 50) {
-			reinicioReloj();
+            if (contador == 0)
+            {
+                finalisarReloj();
+                tiempo_reaccion = timerText.text;
+                Debug.Log(tiempo_reaccion);
+                contador++;
+            }
+            reinicioReloj();
 			iniciarReloj();
             txtcontinuar.text = "";
             btnMsg.SetActive (false);
@@ -558,8 +595,9 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
         audioUbicacion.clip = audio_personaje_1;
         audioUbicacion.Play ();
         //INICIAR TIEMPO 1
-		iniciarReloj();
-		}		IEnumerator playsoundOtravez ( AudioClip audio_personaje) {
+        iniciarReloj();
+        contador = 0;
+    }		IEnumerator playsoundOtravez ( AudioClip audio_personaje) {
 				Debug.Log ("reproducuiendo......");
 				audioUbicacion.clip = seleciona_otra_vez;
 				audioUbicacion.Play ();
@@ -581,27 +619,28 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 		txtcontinuar.text = "Iniciar";
 
 		btnMsg.SetActive (true);
-		iniciarReloj ();
+        iniciarReloj();
+        contador = 0;
     }
 
-	public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto)
-	{
-		string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
-		IDbConnection dbconn;
-		dbconn = (IDbConnection)new SqliteConnection(conn);
-		dbconn.Open();
-		IDbCommand dbcmd = dbconn.CreateCommand();
-		string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "' )";
-		dbcmd.CommandText = sqlQuery;
-		dbcmd.ExecuteReader();
-		Debug.Log("Datos Guardados Corectamente!..");
-		dbcmd.Dispose();
-		dbcmd = null;
-		dbconn.Close();
-		dbconn = null;
-	}
+    public void saveAcierto(int id_detalle_aprendizaje, string time1, string time2, string time3, string acierto, string id_boton, string fecha)
+    {
+        string conn = "URI=file:" + Application.dataPath + "/Recursos/BD/dbdata.db";
+        IDbConnection dbconn;
+        dbconn = (IDbConnection)new SqliteConnection(conn);
+        dbconn.Open();
+        IDbCommand dbcmd = dbconn.CreateCommand();
+        string sqlQuery = "INSERT INTO detalle_aprendizaje_acierto (tiempo_reaccion,tiempo_cuadro, tiempo_boton, acierto, id_detalle_aprendizaje, id_boton, fecha) Values ('" + time1 + "','" + time2 + "','" + time3 + "' , '" + acierto + "' , '" + id_detalle_aprendizaje + "','" + id_boton + "' ,'" + fecha + "')";
+        dbcmd.CommandText = sqlQuery;
+        dbcmd.ExecuteReader();
+        Debug.Log("Datos Guardados Corectamente!..");
+        dbcmd.Dispose();
+        dbcmd = null;
+        dbconn.Close();
+        dbconn = null;
+    }
 
-	public void iniciarReloj()
+    public void iniciarReloj()
 	{
 		startTime = Time.time;
 	}
@@ -626,18 +665,18 @@ public class BASICOB_JUGABILIDAD : MonoBehaviour {
 		finalisacion = true;
 		timerText.color = Color.yellow;
 	}
-	public void reaccionMano(){
-		if (contador == 0)
-		{
-			if (HandRight.activeInHierarchy || HandLeft.activeInHierarchy)
-			{
-				finalisarReloj();
-				tiempo_reaccion = timerText.text;
-				Debug.Log(tiempo_reaccion);
-				reinicioReloj();
-				iniciarReloj();
-				contador++;
-			}
-		}
-	}
+
+
+    public string tipoMano(GameObject HandRight, GameObject HandLeft)
+    {
+        if (HandRight.activeInHierarchy)
+        {
+            mano = "Mano Derecha";
+        }
+        else if (HandLeft.activeInHierarchy)
+        {
+            mano = "Mano Izquierda";
+        }
+        return mano;
+    }
 }
